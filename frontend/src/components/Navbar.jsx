@@ -1,68 +1,91 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { getAuth, clearAuth } from '../auth.js';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { clearAuth, getAuth } from '../auth.js';
 
 export default function Navbar() {
   const auth = getAuth();
   const navigate = useNavigate();
-  const logout = () => { clearAuth(); navigate('/'); };
+
+  const handleLogout = () => {
+    clearAuth();
+    navigate('/');
+  };
+
+  const linkBase =
+    'text-sm font-semibold text-slate-600 hover:text-primary transition-colors flex items-center gap-1 no-underline px-3 py-2 rounded-full';
+
+  const navLinkClass = ({ isActive }) =>
+    `${linkBase} ${isActive ? 'bg-primary/10 text-primary shadow-sm' : ''}`;
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark" style={{ backgroundColor: '#1a1a1a' }}>
-      <div className="container">
-        <Link className="navbar-brand fw-bold" to="/" style={{ fontSize: '1.5rem', color: '#dc2626' }}>
-          <i className="fas fa-heart me-2"></i>ShaadiBazaarHub
-        </Link>
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample" aria-controls="navbarsExample" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarsExample">
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <Link className="nav-link" to="/services">
-                <i className="fas fa-list me-1"></i>Services
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/">
-                <i className="fas fa-home me-1"></i>Home
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/contact-us">
-                <i className="fas fa-envelope me-1"></i>Contact Us
-              </Link>
-            </li>
-            {!auth.token ? (
-              <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/login">
-                    <i className="fas fa-sign-in-alt me-1"></i>Login
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/register">
-                    <i className="fas fa-user-plus me-1"></i>Register
-                  </Link>
-                </li>
-              </>
-            ) : (
-              <>
-                <li className="nav-item">
-                  <Link className="nav-link" to={auth.role === 'customer' ? '/my-bookings' : '/dashboard'}>
-                    <i className="fas fa-shopping-bag me-1"></i>Orders
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="#" onClick={(e) => { e.preventDefault(); logout(); }}>
-                    <i className="fas fa-sign-out-alt me-1"></i>Logout
-                  </Link>
-                </li>
-              </>
-            )}
-          </ul>
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-primary/10">
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        {/* Brand */}
+        <NavLink
+          to="/"
+          className="flex items-center gap-3 rounded-2xl bg-primary/5 px-3 py-1.5 hover:bg-primary/10 transition-colors"
+        >
+          <img
+            src="/logo.png"
+            alt="EventBazaar logo"
+            className="h-7 w-7 rounded-lg shadow-sm object-contain"
+          />
+          <h1 className="text-lg md:text-xl font-extrabold tracking-tight text-primary">
+            EventBazaar
+          </h1>
+        </NavLink>
+
+        {/* Center nav links */}
+        <nav className="hidden md:flex items-center gap-2 rounded-full bg-white/60 px-2 py-1 shadow-sm">
+          <NavLink to="/services" className={navLinkClass}>
+            Find Vendors
+          </NavLink>
+          <a href="#" className={linkBase}>
+            Inspiration
+          </a>
+          <a href="#" className={linkBase}>
+            Pricing
+          </a>
+          <a href="#" className={linkBase}>
+            Track
+          </a>
+        </nav>
+
+        {/* Right actions */}
+        <div className="flex items-center gap-2">
+          {!auth.token ? (
+            <>
+              <NavLink
+                to="/login"
+                className="hidden sm:inline-flex items-center justify-center text-sm font-semibold text-primary px-4 py-2 rounded-full border border-primary/20 hover:bg-primary/5 transition-colors no-underline"
+              >
+                Log In
+              </NavLink>
+              <NavLink
+                to="/register"
+                className="inline-flex items-center justify-center bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-md shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-0.5 transition-all no-underline"
+              >
+                Get Started
+              </NavLink>
+            </>
+          ) : (
+            <>
+              <NavLink
+                to={auth.role === 'customer' ? '/my-bookings' : '/dashboard'}
+                className="hidden sm:inline-flex items-center justify-center text-sm font-semibold text-primary px-4 py-2 rounded-full border border-primary/20 hover:bg-primary/5 transition-colors no-underline"
+              >
+                {auth.role === 'customer' ? 'My Bookings' : 'Dashboard'}
+              </NavLink>
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center justify-center bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-md shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-0.5 transition-all"
+              >
+                Logout
+              </button>
+            </>
+          )}
         </div>
       </div>
-    </nav>
+    </header>
   );
 }
 

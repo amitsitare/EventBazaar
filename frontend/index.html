@@ -3,17 +3,59 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ShaadiBazaarHub</title>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>EventBazaar - Plan Your Perfect Celebration</title>
+
+    <link rel="icon" type="image/png" href="/logo.png" />
+
+    <!-- Tailwind via CDN with basic config for this landing UI -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#840bda',
+              'background-light': '#f7f5f8',
+              'background-dark': '#1b1022',
+            },
+            fontFamily: {
+              display: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+            },
+            borderRadius: {
+              DEFAULT: '0.25rem',
+              lg: '0.5rem',
+              xl: '0.75rem',
+              full: '9999px',
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Google Fonts for new visual + existing Poppins if needed elsewhere -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Material Symbols for icons -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- FontAwesome Icons (still used in other pages) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
   </head>
-  <body>
+  <body class="bg-background-light font-display text-slate-900">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
-  </html>
+</html>
 
 
 

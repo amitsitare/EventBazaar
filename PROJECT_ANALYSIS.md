@@ -1,8 +1,8 @@
-# ShaadiBazaarHub - Complete Project Analysis
+# EventBazaar - Complete Project Analysis
 
 ## 📋 Project Overview
 
-**ShaadiBazaarHub** is a comprehensive wedding services booking platform that connects service providers (caterers, tent houses, band baja, decorators, etc.) with customers planning weddings. The platform enables customers to browse, search, and book wedding-related services, while providers can manage their service listings.
+**EventBazaar** is a comprehensive event services booking platform that connects service providers (caterers, tent houses, band baja, decorators, etc.) with customers planning events. The platform enables customers to browse, search, and book event-related services, while providers can manage their service listings.
 
 ---
 
@@ -324,7 +324,7 @@ ShaadiSphere/
 - Status badges (pending/confirmed/cancelled)
 
 ### **8. Navigation Bar**
-- Brand: "ShaadiBazaarHub"
+- Brand: "EventBazaar"
 - Links:
   - Home
   - Services
@@ -558,7 +558,7 @@ RAZORPAY_KEY_SECRET=
 
 ---
 
-**Project Name**: ShaadiBazaarHub  
+**Project Name**: EventBazaar  
 **Database**: shaadisphere  
 **Version**: 0.1.0
 

@@ -108,7 +108,7 @@ async def test_configuration():
 async def main():
     """Main test function"""
     
-    print("🚀 ShaadiBazaarHub WhatsApp Integration Test")
+    print("🚀 EventBazaar WhatsApp Integration Test")
     print("=" * 60)
     print()
     

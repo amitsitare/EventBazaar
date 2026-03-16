@@ -90,7 +90,7 @@ class TwilioWhatsAppService:
         )
         if notes:
             message += f"📝 Notes: {notes}\n"
-        message += "\n— ShaadiBazaarHub"
+        message += "\n— EventBazaar"
 
         return await self._send_twilio_message(to_number, message)
     
@@ -131,7 +131,7 @@ class TwilioWhatsAppService:
 Please contact the customer to confirm the booking and discuss further details.
 
 ---
-*ShaadiBazaarHub - Your Wedding Partner* 💒"""
+*EventBazaar - Your Event Partner* 💒"""
         
         return message
     

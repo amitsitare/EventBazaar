@@ -24,9 +24,10 @@ async def get_current_user(authorization: Optional[str] = Header(default=None)):
 @router.post("/register", response_model=UserPublic)
 async def register(user: UserCreate, conn=Depends(get_db_conn)):
     try:
+        normalized_email = user.email.strip().lower()
         async with conn.cursor() as cur:
             # Check if user already exists
-            await cur.execute("SELECT id FROM users WHERE email = %s", (user.email,))
+            await cur.execute("SELECT id FROM users WHERE LOWER(email) = %s", (normalized_email,))
             existing_user = await cur.fetchone()
             if existing_user:
                 raise HTTPException(
@@ -37,11 +38,31 @@ async def register(user: UserCreate, conn=Depends(get_db_conn)):
             # Insert new user
             await cur.execute(
                 """
-                INSERT INTO users (name, email, mobile, whatsapp_number, address, role, password_hash)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-                RETURNING id, name, email, mobile, whatsapp_number, address, role
+                INSERT INTO users (
+                    name,
+                    email,
+                    mobile,
+                    whatsapp_number,
+                    address,
+                    role,
+                    password_hash,
+                    latitude,
+                    longitude
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                RETURNING id, name, email, mobile, whatsapp_number, address, role, latitude, longitude
                 """,
-                (user.name, user.email, user.mobile, user.whatsapp_number, user.address, user.role, hash_password(user.password)),
+                (
+                    user.name,
+                    normalized_email,
+                    user.mobile,
+                    user.whatsapp_number,
+                    user.address,
+                    user.role,
+                    hash_password(user.password),
+                    user.latitude,
+                    user.longitude,
+                ),
             )
             row = await cur.fetchone()
             await conn.commit()
@@ -54,6 +75,8 @@ async def register(user: UserCreate, conn=Depends(get_db_conn)):
                 "whatsapp_number": row[4],
                 "address": row[5],
                 "role": row[6],
+                "latitude": row[7],
+                "longitude": row[8],
             })
     except psycopg.IntegrityError as e:
         await conn.rollback()
@@ -116,12 +139,30 @@ async def me(payload=Depends(get_current_user), conn=Depends(get_db_conn)):
         user_id = int(payload["sub"])  # subject is user id
         async with conn.cursor() as cur:
             await cur.execute(
-                "SELECT id, name, email, mobile, whatsapp_number, address, role FROM users WHERE id = %s", 
-                (user_id,)
+                """
+                SELECT
+                    id,
+                    name,
+                    email,
+                    mobile,
+                    whatsapp_number,
+                    address,
+                    role,
+                    latitude,
+                    longitude
+                FROM users
+                WHERE id = %s
+                """,
+                (user_id,),
             )
             row = await cur.fetchone()
             if not row:
                 raise HTTPException(status_code=404, detail="User not found")
+            if row[7] is None or row[8] is None:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="Location not set for this user. Please allow location permission and update your profile.",
+                )
             return UserPublic(**{
                 "id": row[0],
                 "name": row[1],
@@ -130,6 +171,8 @@ async def me(payload=Depends(get_current_user), conn=Depends(get_db_conn)):
                 "whatsapp_number": row[4],
                 "address": row[5],
                 "role": row[6],
+                "latitude": row[7],
+                "longitude": row[8],
             })
     except HTTPException:
         raise

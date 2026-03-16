@@ -1,195 +1,161 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-
 export default function Footer() {
   return (
-    <footer className="bg-dark text-white py-5 mt-5">
-      <div className="container">
-        <div className="row g-4">
-          {/* Company Info */}
-          <div className="col-lg-4 col-md-6">
-            <div className="mb-4">
-              <h5 className="fw-bold mb-3">
-                <i className="fas fa-heart text-danger me-2"></i>
-                ShaadiBazaarHub
-              </h5>
-              <p className="text-light-emphasis">
-                Your trusted partner for all wedding services. We connect you with the best vendors 
-                to make your special day unforgettable.
+    <footer className="hidden md:block border-t border-primary/10 bg-white">
+      <div className="max-w-7xl mx-auto px-4 pt-14 pb-10">
+        <div className="grid grid-cols-1 md:grid-cols-[1.5fr,1fr,1fr] gap-12">
+          {/* Brand + tagline */}
+          <div className="space-y-5">
+            <div className="inline-flex items-center gap-3 rounded-2xl bg-primary/5 px-4 py-3">
+              <img
+                src="/logo.png"
+                alt="EventBazaar logo"
+                className="h-8 w-8 rounded-lg shadow-sm object-contain"
+              />
+              <span className="text-lg font-extrabold tracking-tight text-primary">
+                EventBazaar
+              </span>
+            </div>
+            <p className="text-sm leading-relaxed text-slate-500 max-w-sm">
+              Plan weddings, parties, and corporate events with trusted vendors across catering,
+              decor, photography, music, venues and more.
+            </p>
+            <div className="flex items-center gap-3 text-xs text-slate-400">
+              <span className="inline-flex h-7 items-center rounded-full bg-primary/5 px-3 font-semibold text-primary">
+                Made for unforgettable celebrations
+              </span>
+            </div>
+          </div>
+
+          {/* Customer links */}
+          <div>
+            <h4 className="text-sm font-semibold tracking-wide text-slate-900 uppercase mb-5">
+              For Customers
+            </h4>
+            <ul className="space-y-3 text-sm text-slate-500">
+              <li className="group">
+                <a
+                  href="#"
+                  className="flex items-center gap-2 text-slate-500 transition-colors no-underline"
+                >
+                  <span className="material-symbols-outlined text-base text-primary/60 group-hover:text-primary">
+                    browse_activity
+                  </span>
+                  <span className="group-hover:text-primary">Browse &amp; book vendors</span>
+                </a>
+              </li>
+              <li className="group">
+                <a
+                  href="#"
+                  className="flex items-center gap-2 text-slate-500 transition-colors no-underline"
+                >
+                  <span className="material-symbols-outlined text-base text-primary/60 group-hover:text-primary">
+                    workspace_premium
+                  </span>
+                  <span className="group-hover:text-primary">Featured weddings &amp; stories</span>
+                </a>
+              </li>
+              <li className="group">
+                <a
+                  href="#"
+                  className="flex items-center gap-2 text-slate-500 transition-colors no-underline"
+                >
+                  <span className="material-symbols-outlined text-base text-primary/60 group-hover:text-primary">
+                    help
+                  </span>
+                  <span className="group-hover:text-primary">Help center</span>
+                </a>
+              </li>
+              <li className="group">
+                <a
+                  href="#"
+                  className="flex items-center gap-2 text-slate-500 transition-colors no-underline"
+                >
+                  <span className="material-symbols-outlined text-base text-primary/60 group-hover:text-primary">
+                    verified_user
+                  </span>
+                  <span className="group-hover:text-primary">Safety &amp; trust</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Vendor links + socials */}
+          <div>
+            <h4 className="text-sm font-semibold tracking-wide text-slate-900 uppercase mb-5">
+              For Vendors
+            </h4>
+            <ul className="space-y-3 text-sm text-slate-500 mb-6">
+              <li className="group">
+                <a
+                  href="#"
+                  className="flex items-center gap-2 text-slate-500 transition-colors no-underline"
+                >
+                  <span className="material-symbols-outlined text-base text-primary/60 group-hover:text-primary">
+                    storefront
+                  </span>
+                  <span className="group-hover:text-primary">Join EventBazaar</span>
+                </a>
+              </li>
+              <li className="group">
+                <a
+                  href="#"
+                  className="flex items-center gap-2 text-slate-500 transition-colors no-underline"
+                >
+                  <span className="material-symbols-outlined text-base text-primary/60 group-hover:text-primary">
+                    trending_up
+                  </span>
+                  <span className="group-hover:text-primary">Grow your business</span>
+                </a>
+              </li>
+              <li className="group">
+                <a
+                  href="#"
+                  className="flex items-center gap-2 text-slate-500 transition-colors no-underline"
+                >
+                  <span className="material-symbols-outlined text-base text-primary/60 group-hover:text-primary">
+                    equalizer
+                  </span>
+                  <span className="group-hover:text-primary">Pricing &amp; plans</span>
+                </a>
+              </li>
+            </ul>
+
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                Connect
               </p>
-              <div className="d-flex gap-3 flex-wrap">
-                <a
-                  href="https://facebook.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-primary rounded-circle"
-                  style={{ width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <i className="fab fa-facebook-f"></i>
-                </a>
-                <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-danger rounded-circle"
-                  style={{ width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <i className="fab fa-instagram"></i>
-                </a>
-                <a
-                  href="https://twitter.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-info rounded-circle"
-                  style={{ width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <i className="fab fa-twitter"></i>
-                </a>
-                <a
-                  href="https://linkedin.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-primary rounded-circle"
-                  style={{ width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <i className="fab fa-linkedin-in"></i>
-                </a>
-                <a
-                  href="https://whatsapp.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-success rounded-circle"
-                  style={{ width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <i className="fab fa-whatsapp"></i>
-                </a>
+              <div className="flex gap-3">
+                <button className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-primary/20 text-primary hover:bg-primary hover:text-white transition-colors">
+                  <i className="fab fa-instagram text-sm" />
+                </button>
+                <button className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-primary/20 text-primary hover:bg-primary hover:text-white transition-colors">
+                  <i className="fab fa-facebook-f text-sm" />
+                </button>
+                <button className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-primary/20 text-primary hover:bg-primary hover:text-white transition-colors">
+                  <i className="fab fa-linkedin-in text-sm" />
+                </button>
               </div>
             </div>
           </div>
-
-          {/* Quick Links */}
-          <div className="col-lg-2 col-md-6">
-            <h6 className="fw-bold mb-3">Quick Links</h6>
-            <ul className="list-unstyled">
-              <li className="mb-2">
-                <Link to="/" className="text-light-emphasis text-decoration-none">
-                  <i className="fas fa-home me-2"></i>Home
-                </Link>
-              </li>
-              <li className="mb-2">
-                <Link to="/services" className="text-light-emphasis text-decoration-none">
-                  <i className="fas fa-list me-2"></i>Services
-                </Link>
-              </li>
-              <li className="mb-2">
-                <Link to="/register" className="text-light-emphasis text-decoration-none">
-                  <i className="fas fa-user-plus me-2"></i>Register
-                </Link>
-              </li>
-              <li className="mb-2">
-                <Link to="/login" className="text-light-emphasis text-decoration-none">
-                  <i className="fas fa-sign-in-alt me-2"></i>Login
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div className="col-lg-3 col-md-6">
-            <h6 className="fw-bold mb-3">Our Services</h6>
-            <ul className="list-unstyled">
-              <li className="mb-2">
-                <Link to="/services" className="text-light-emphasis text-decoration-none">
-                  <i className="fas fa-utensils me-2"></i>Catering
-                </Link>
-              </li>
-              <li className="mb-2">
-                <Link to="/services" className="text-light-emphasis text-decoration-none">
-                  <i className="fas fa-music me-2"></i>Band & DJ
-                </Link>
-              </li>
-              <li className="mb-2">
-                <Link to="/services" className="text-light-emphasis text-decoration-none">
-                  <i className="fas fa-home me-2"></i>Venue Booking
-                </Link>
-              </li>
-              <li className="mb-2">
-                <Link to="/services" className="text-light-emphasis text-decoration-none">
-                  <i className="fas fa-palette me-2"></i>Decoration
-                </Link>
-              </li>
-              <li className="mb-2">
-                <Link to="/services" className="text-light-emphasis text-decoration-none">
-                  <i className="fas fa-campground me-2"></i>Tent Setup
-                </Link>
-              </li>
-              <li className="mb-2">
-                <Link to="/services" className="text-light-emphasis text-decoration-none">
-                  <i className="fas fa-camera me-2"></i>Photography
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div className="col-lg-3 col-md-6">
-            <h6 className="fw-bold mb-3">Contact Us</h6>
-            <ul className="list-unstyled">
-              <li className="mb-2">
-                <span className="text-light-emphasis">
-                  <i className="fas fa-map-marker-alt me-2"></i>
-                  Tiwariganj, Lucknow, UP (226028), India
-                </span>
-              </li>
-              <li className="mb-2">
-                <span className="text-light-emphasis">
-                  <i className="fas fa-phone me-2"></i>
-                  +91 63954 90029
-                </span>
-              </li>
-              <li className="mb-2">
-                <span className="text-light-emphasis">
-                  <i className="fas fa-envelope me-2"></i>
-                  amitdiwakar946@gmail.com
-                </span>
-              </li>
-              <li className="mb-2">
-                <span className="text-light-emphasis">
-                  <i className="fas fa-clock me-2"></i>
-                  Mon - Sun: 9:00 AM - 9:00 PM
-                </span>
-              </li>
-            </ul>
-          </div>
         </div>
 
-        <hr className="my-4 border-secondary" />
-
-        {/* Bottom Section */}
-        <div className="row align-items-center">
-          <div className="col-md-6">
-            <p className="mb-0 text-light-emphasis">
-              © {new Date().getFullYear()} ShaadiBazaarHub. All rights reserved.
-            </p>
-          </div>
-          <div className="col-md-6 text-md-end">
-            <div className="d-flex gap-3 justify-content-md-end">
-              <a href="#" className="text-light-emphasis text-decoration-none small">
-                Privacy Policy
-              </a>
-              <a href="#" className="text-light-emphasis text-decoration-none small">
-                Terms of Service
-              </a>
-              <a href="#" className="text-light-emphasis text-decoration-none small">
-                Help Center
-              </a>
-            </div>
+        <div className="mt-10 flex flex-col gap-4 border-t border-slate-100 pt-6 md:flex-row md:items-center md:justify-between">
+          <p className="text-xs text-slate-400">
+            © {new Date().getFullYear()} EventBazaar. All rights reserved.
+          </p>
+          <div className="flex flex-wrap gap-4 text-xs text-slate-400">
+                <a href="#" className="hover:text-primary transition-colors no-underline">
+              Privacy Policy
+            </a>
+            <a href="#" className="hover:text-primary transition-colors no-underline">
+              Terms of Service
+            </a>
+            <a href="#" className="hover:text-primary transition-colors no-underline">
+              Cookie Policy
+            </a>
           </div>
         </div>
       </div>
     </footer>
   );
 }
-
-
-

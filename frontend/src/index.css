@@ -1,4 +1,4 @@
-/* Custom styles for ShaadiBazaarHub */
+/* Custom styles for EventBazaar */
 
 /* Global Styles */
 body { 
@@ -19,7 +19,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(220, 38, 38, 0.4), rgba(185, 28, 28, 0.6));
+  background: linear-gradient(135deg, rgba(132, 11, 218, 0.4), rgba(132, 11, 218, 0.7));
   z-index: 1;
 }
 
@@ -91,6 +91,147 @@ footer a:hover {
   animation: fadeInUp 0.8s ease-out;
 }
 
+/* Navbar Styles */
+/* Navbar container */
+.navbar-custom {
+  background: linear-gradient(90deg, #2b0a45 0%, #3b0f5f 45%, #840bda 100%);
+  box-shadow: 0 2px 18px rgba(15,23,42,0.65);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(248,250,252,0.08);
+}
+
+.navbar-custom .navbar-brand-custom {
+  color: #fef9c3 !important;
+}
+
+.navbar-custom .nav-link-custom {
+  color: rgba(241,245,249,0.9);
+}
+
+.navbar-custom .nav-link-custom:hover,
+.navbar-custom .nav-link-custom.active {
+  color: #ffffff;
+}
+
+/* underline accent */
+.navbar-custom .nav-link-custom::after {
+  background: linear-gradient(90deg, #e879f9, #c4b5fd);
+}
+
+/* ensure icons inside links inherit link color */
+.navbar-custom .nav-link-custom i {
+  color: inherit;
+}
+
+.navbar-brand-custom {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fef2f2 !important;
+  letter-spacing: 0.2px;
+  transition: all 0.2s ease;
+}
+
+.navbar-brand-custom:hover {
+  transform: translateY(-1px) scale(1.02);
+}
+
+.nav-link-custom {
+  font-weight: 600;
+  transition: all 0.18s ease;
+  position: relative;
+  padding: 0.5rem 0.6rem;
+  margin-left: 6px;
+}
+
+.nav-link-custom::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 10%;
+  width: 0;
+  height: 2px;
+  transition: all 0.18s ease;
+}
+
+.nav-link-custom:hover::after,
+.nav-link-custom.active::after {
+  width: 80%;
+}
+
+.navbar-toggler-custom {
+  border: none;
+  background: rgba(255,255,255,0.06);
+}
+
+.navbar-toggler-custom:focus {
+  box-shadow: 0 0 0 0.18rem rgba(132, 11, 218, 0.35);
+}
+
+/* Logo Styles */
+.brand-logo {
+  background: #ffffff;
+  padding: 6px;
+  border-radius: 10px;
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(2,6,23,0.2);
+}
+
+.brand-logo img { max-width: 100%; height: auto; display:block }
+
+.brand-text {
+  margin-left: 6px;
+  background: linear-gradient(135deg, #e879f9 0%, #a855f7 45%, #c4b5fd 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Primary gradient button used in navbar */
+.btn-gradient-primary {
+  background: linear-gradient(135deg, #581c87 0%, #7c3aed 45%, #c4b5fd 100%);
+  color: #f9fafb;
+  border: none;
+  box-shadow: 0 12px 30px rgba(132, 11, 218, 0.45);
+}
+
+.btn-gradient-primary:hover {
+  color: #f9fafb;
+  opacity: 0.95;
+}
+
+/* Footer */
+.footer-modern {
+  background: radial-gradient(circle at top, #2b0a45 0%, #2b0a45 50%, #3b0f5f 100%);
+  border-top: 1px solid rgba(148,163,184,0.4);
+}
+
+footer img {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+footer:hover img {
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(15,23,42,0.6);
+}
+
+.footer-modern h5,
+.footer-modern h6 {
+  letter-spacing: 0.04em;
+}
+
+.footer-modern .text-light-emphasis {
+  color: #9ca3af !important;
+}
+
+.footer-modern .footer-social {
+  border-width: 1px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .hero-section {
@@ -123,7 +264,7 @@ footer a:hover {
   justify-content: center;
   flex-direction: column;
   gap: 6px;
-  color: #dc2626;
+  color: #840bda;
   animation: floatY 4.5s ease-in-out infinite;
 }
 
@@ -174,7 +315,7 @@ footer a:hover {
   height: 520px;
   border-radius: 120px 120px 16px 16px; /* arch top */
   border: 8px solid #fff;
-  background: linear-gradient(180deg, rgba(220,38,38,0.08), rgba(220,38,38,0));
+  background: linear-gradient(180deg, rgba(132,11,218,0.12), rgba(132,11,218,0));
 }
 
 /* Service chips */
@@ -186,15 +327,67 @@ footer a:hover {
   padding: 10px 14px;
   border-radius: 999px; /* pill */
   background: #ffffff;
-  color: #dc2626;
-  border: 1px solid rgba(220,38,38,0.15);
+  color: #840bda;
+  border: 1px solid rgba(132,11,218,0.25);
   transition: all .25s ease;
 }
 
 .service-chip:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 22px rgba(0,0,0,.08);
-  border-color: rgba(220,38,38,0.35);
+  border-color: rgba(132,11,218,0.5);
+}
+
+/* Bootstrap primary overrides to match #840bda theme */
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary:disabled {
+  background-color: #840bda !important;
+  border-color: #840bda !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 24px rgba(132, 11, 218, 0.4) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  filter: brightness(1.05);
+}
+
+.btn-outline-primary,
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  color: #840bda !important;
+  border-color: #840bda !important;
+  background-color: rgba(132, 11, 218, 0.04) !important;
+  box-shadow: 0 8px 20px rgba(132, 11, 218, 0.25) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  background-color: rgba(132, 11, 218, 0.09) !important;
+}
+
+.badge.bg-primary {
+  background-color: #840bda !important;
+}
+
+/* Override Bootstrap primary color utilities to purple */
+.bg-primary {
+  background-color: #840bda !important;
+}
+
+.text-primary {
+  color: #840bda !important;
+}
+
+.border-primary,
+.border-primary\/10,
+.border-primary\/20,
+.border-primary\/40 {
+  border-color: #840bda !important;
 }
 
 /* Responsive */

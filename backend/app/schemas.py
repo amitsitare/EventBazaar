@@ -1,6 +1,6 @@
-from typing import Optional, Literal
+from typing import Optional, Literal, List
 from datetime import date
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, constr
 
 
 UserRole = Literal["provider", "customer"]
@@ -9,10 +9,12 @@ UserRole = Literal["provider", "customer"]
 class UserBase(BaseModel):
     name: str
     email: EmailStr
-    mobile: str
+    mobile: constr(pattern=r"^\d{10}$")
     whatsapp_number: Optional[str] = None
     address: str
     role: UserRole
+    latitude: float
+    longitude: float
 
 
 class UserCreate(UserBase):
@@ -32,6 +34,8 @@ class UserPublic(BaseModel):
     whatsapp_number: Optional[str] = None
     address: str
     role: UserRole
+    latitude: float
+    longitude: float
 
 
 class TokenResponse(BaseModel):
@@ -42,8 +46,9 @@ class TokenResponse(BaseModel):
 class ServiceBase(BaseModel):
     name: str
     description: Optional[str] = None
-    price: float
+    price: Optional[float] = None
     photo_url: Optional[str] = None
+    photo_urls: Optional[List[str]] = None
     location: str
 
 
@@ -54,6 +59,22 @@ class ServiceCreate(ServiceBase):
 class ServicePublic(ServiceBase):
     id: int
     provider_id: int
+
+
+class ServiceItemBase(BaseModel):
+    name: str
+    quantity: Optional[str] = None
+    amount: Optional[float] = None
+    photo_url: Optional[str] = None
+
+
+class ServiceItemCreate(ServiceItemBase):
+    pass
+
+
+class ServiceItemPublic(ServiceItemBase):
+    id: int
+    service_id: int
 
 
 class BookingBase(BaseModel):

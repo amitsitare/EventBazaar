@@ -1,8 +1,8 @@
-# 🎉 ShaadiBazaarHub - Wedding Services Booking Platform
+# 🎉 EventBazaar - Event Services Booking Platform
 
 <div align="center">
 
-![ShaadiBazaarHub](https://img.shields.io/badge/ShaadiBazaarHub-Wedding%20Services-red?style=for-the-badge)
+![EventBazaar](https://img.shields.io/badge/EventBazaar-Event%20Services-red?style=for-the-badge)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.111.0-009688?style=for-the-badge&logo=fastapi)
 ![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-316192?style=for-the-badge&logo=postgresql)
@@ -37,7 +37,7 @@
 
 ## 🎯 Overview
 
-**ShaadiBazaarHub** is a modern wedding services marketplace that simplifies the process of finding and booking wedding-related services. The platform enables:
+**EventBazaar** is a modern event services marketplace that simplifies the process of finding and booking event-related services. The platform enables:
 
 - **Service Providers** to list and manage their services (catering, decoration, tents, music, etc.)
 - **Customers** to browse, search, and book services with secure online payments
@@ -115,7 +115,7 @@
 ## 📁 Project Structure
 
 ```
-ShaadiBazaarHub/
+EventBazaar/
 ├── backend/
 │   ├── app/
 │   │   ├── main.py              # FastAPI application
@@ -179,8 +179,8 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/amitsitare/ShaadiBazaarHub.git
-cd ShaadiBazaarHub
+git clone https://github.com/amitsitare/EventBazaar.git
+cd EventBazaar
 ```
 
 ### 2. Backend Setup
@@ -336,7 +336,7 @@ VITE_API_BASE_URL=http://localhost:8000
    ```yaml
    services:
      - type: web
-       name: shaadibazaarhub-backend
+       name: eventbazaar-backend
        env: python
        buildCommand: pip install -r backend/requirements.txt
        startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
@@ -382,7 +382,7 @@ VITE_API_BASE_URL=http://localhost:8000
    - Click "New +" → "Web Service"
    - Connect your GitHub repository
    - Configure settings:
-     - **Name**: `shaadibazaarhub-backend`
+     - **Name**: `eventbazaar-backend`
      - **Environment**: `Python 3`
      - **Build Command**: `pip install -r backend/requirements.txt`
      - **Start Command**: `cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT`
@@ -576,6 +576,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Made with ❤️ for making weddings special**
 
-[⭐ Star this repo](https://github.com/yourusername/ShaadiBazaarHub) • [🐛 Report Bug](https://github.com/yourusername/ShaadiBazaarHub/issues) • [💡 Request Feature](https://github.com/yourusername/ShaadiBazaarHub/issues)
+[⭐ Star this repo](https://github.com/yourusername/EventBazaar) • [🐛 Report Bug](https://github.com/yourusername/EventBazaar/issues) • [💡 Request Feature](https://github.com/yourusername/EventBazaar/issues)
 
 </div>

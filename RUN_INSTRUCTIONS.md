@@ -1,4 +1,4 @@
-# 🚀 How to Run ShaadiBazaarHub
+# 🚀 How to Run EventBazaar
 
 ## Prerequisites
 

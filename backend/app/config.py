@@ -17,16 +17,24 @@ except ImportError:
 
 
 class Settings(BaseModel):
-    # Database configuration - set these separately
+    # Database configuration - prefer env/.env, but use safe defaults
+    # Note: if `python-dotenv` is not installed, these will still work
+    # with OS-level environment variables.
     db_host: str = os.getenv("DB_HOST", "localhost")
     db_port: int = int(os.getenv("DB_PORT", "5432"))
-    db_name: str = os.getenv("DB_NAME", "shaadisphere")
+    db_name: str = os.getenv("DB_NAME", "EventBazaar")
     db_user: str = os.getenv("DB_USER", "postgres")
-    db_password: str = os.getenv("DB_PASSWORD", "your_password_here")
+    db_password: str = os.getenv("DB_PASSWORD", "")
     
     # Construct database URL from components
     @property
     def database_url(self) -> str:
+        # If full DATABASE_URL is provided, prefer that.
+        env_url = os.getenv("DATABASE_URL")
+        if env_url:
+            return env_url
+
+        # Otherwise construct from individual fields.
         # URL encode the password to handle special characters like @, #, etc.
         encoded_password = quote_plus(self.db_password)
         return f"postgresql://{self.db_user}:{encoded_password}@{self.db_host}:{self.db_port}/{self.db_name}"

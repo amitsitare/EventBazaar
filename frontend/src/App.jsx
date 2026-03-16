@@ -8,6 +8,7 @@ import Register from './pages/Register.jsx';
 import ServiceList from './pages/ServiceList.jsx';
 import ServiceDetail from './pages/ServiceDetail.jsx';
 import ProviderDashboard from './pages/ProviderDashboard.jsx';
+import ServiceItems from './pages/ServiceItems.jsx';
 import MyBookings from './pages/MyBookings.jsx';
 import ContactUs from './pages/ContactUs.jsx';
 import { getAuth } from './auth.js';
@@ -33,6 +34,9 @@ export default function App() {
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/dashboard" element={
             <PrivateRoute role="provider"><ProviderDashboard /></PrivateRoute>
+          } />
+          <Route path="/dashboard/services/:id/items" element={
+            <PrivateRoute role="provider"><ServiceItems /></PrivateRoute>
           } />
           <Route path="/my-bookings" element={
             <PrivateRoute role="customer"><MyBookings /></PrivateRoute>

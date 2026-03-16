@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ShaadiBazaarHub Database Setup
+EventBazaar Database Setup
 This script creates the database tables and inserts sample data
 """
 
@@ -293,7 +293,7 @@ def main():
     """Main function to setup database"""
     config = get_db_config()
     
-    print("ShaadiBazaarHub Database Setup")
+    print("EventBazaar Database Setup")
     print("=" * 40)
     print(f"Host: {config['host']}")
     print(f"Port: {config['port']}")

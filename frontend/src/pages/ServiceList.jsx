@@ -235,9 +235,14 @@ export default function ServiceList() {
                       <p className="text-base font-bold text-amber-600">
                         {s.price != null ? `₹${s.price}` : 'From items'}
                       </p>
-                      <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-slate-500">
-                        Service
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
+                          ★ {Number(s.avg_rating || 0).toFixed(1)}
+                        </span>
+                        <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                          {Number(s.review_count || 0)} review{Number(s.review_count || 0) === 1 ? '' : 's'}
+                        </span>
+                      </div>
                     </div>
                     <Link
                       className="mt-auto inline-flex h-10 items-center justify-center rounded-xl border border-amber-300 bg-amber-50 px-4 text-sm font-semibold text-amber-700 transition hover:-translate-y-0.5 hover:border-amber-400 hover:bg-amber-100"

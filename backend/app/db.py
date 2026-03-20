@@ -154,9 +154,16 @@ def _ensure_tables_exist_sync(conn) -> None:
                 notes TEXT,
                 address TEXT,
                 duration_hours INTEGER,
+                paid_amount NUMERIC(12,2),
                 status TEXT NOT NULL CHECK (status IN ('pending','confirmed','cancelled')) DEFAULT 'pending',
                 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             );
+            """
+        )
+        cur.execute(
+            """
+            ALTER TABLE bookings
+            ADD COLUMN IF NOT EXISTS paid_amount NUMERIC(12,2);
             """
         )
 
@@ -170,6 +177,43 @@ def _ensure_tables_exist_sync(conn) -> None:
                 amount NUMERIC(12,2),
                 photo_url TEXT,
                 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            );
+            """
+        )
+
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS payments (
+                id SERIAL PRIMARY KEY,
+                order_id TEXT NOT NULL UNIQUE,
+                payment_id TEXT NOT NULL UNIQUE,
+                signature_status TEXT NOT NULL CHECK (signature_status IN ('verified','failed')),
+                amount NUMERIC(12,2) NOT NULL,
+                user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                service_id INTEGER NOT NULL REFERENCES services(id) ON DELETE CASCADE,
+                booking_id INTEGER REFERENCES bookings(id) ON DELETE SET NULL,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            );
+            """
+        )
+        cur.execute(
+            """
+            ALTER TABLE payments
+            ADD COLUMN IF NOT EXISTS booking_id INTEGER REFERENCES bookings(id) ON DELETE SET NULL;
+            """
+        )
+
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS reviews (
+                id SERIAL PRIMARY KEY,
+                booking_id INTEGER NOT NULL UNIQUE REFERENCES bookings(id) ON DELETE CASCADE,
+                service_id INTEGER NOT NULL REFERENCES services(id) ON DELETE CASCADE,
+                customer_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+                comment TEXT,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             );
             """
         )
@@ -206,6 +250,18 @@ def _ensure_tables_exist_sync(conn) -> None:
             """
             CREATE INDEX IF NOT EXISTS idx_services_location
             ON services (location);
+            """
+        )
+        cur.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_reviews_service_id
+            ON reviews (service_id);
+            """
+        )
+        cur.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_reviews_customer_id
+            ON reviews (customer_id);
             """
         )
 
@@ -305,9 +361,16 @@ async def _ensure_tables_exist_async(conn: "psycopg.AsyncConnection") -> None:
                 notes TEXT,
                 address TEXT,
                 duration_hours INTEGER,
+                paid_amount NUMERIC(12,2),
                 status TEXT NOT NULL CHECK (status IN ('pending','confirmed','cancelled')) DEFAULT 'pending',
                 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             );
+            """
+        )
+        await cur.execute(
+            """
+            ALTER TABLE bookings
+            ADD COLUMN IF NOT EXISTS paid_amount NUMERIC(12,2);
             """
         )
 
@@ -321,6 +384,43 @@ async def _ensure_tables_exist_async(conn: "psycopg.AsyncConnection") -> None:
                 amount NUMERIC(12,2),
                 photo_url TEXT,
                 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            );
+            """
+        )
+
+        await cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS payments (
+                id SERIAL PRIMARY KEY,
+                order_id TEXT NOT NULL UNIQUE,
+                payment_id TEXT NOT NULL UNIQUE,
+                signature_status TEXT NOT NULL CHECK (signature_status IN ('verified','failed')),
+                amount NUMERIC(12,2) NOT NULL,
+                user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                service_id INTEGER NOT NULL REFERENCES services(id) ON DELETE CASCADE,
+                booking_id INTEGER REFERENCES bookings(id) ON DELETE SET NULL,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            );
+            """
+        )
+        await cur.execute(
+            """
+            ALTER TABLE payments
+            ADD COLUMN IF NOT EXISTS booking_id INTEGER REFERENCES bookings(id) ON DELETE SET NULL;
+            """
+        )
+
+        await cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS reviews (
+                id SERIAL PRIMARY KEY,
+                booking_id INTEGER NOT NULL UNIQUE REFERENCES bookings(id) ON DELETE CASCADE,
+                service_id INTEGER NOT NULL REFERENCES services(id) ON DELETE CASCADE,
+                customer_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+                comment TEXT,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             );
             """
         )
@@ -357,6 +457,18 @@ async def _ensure_tables_exist_async(conn: "psycopg.AsyncConnection") -> None:
             """
             CREATE INDEX IF NOT EXISTS idx_services_location
             ON services (location);
+            """
+        )
+        await cur.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_reviews_service_id
+            ON reviews (service_id);
+            """
+        )
+        await cur.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_reviews_customer_id
+            ON reviews (customer_id);
             """
         )
 

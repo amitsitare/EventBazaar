@@ -62,5 +62,23 @@ class Settings(BaseModel):
     razorpay_key_id: str = os.getenv("RAZORPAY_KEY_ID", "")
     razorpay_key_secret: str = os.getenv("RAZORPAY_KEY_SECRET", "")
 
+    # SMTP email configuration (booking confirmation)
+    smtp_enabled: bool = os.getenv("SMTP_ENABLED", "false").lower() == "true"
+    smtp_host: str = os.getenv("SMTP_HOST", "")
+    smtp_port: int = int(os.getenv("SMTP_PORT", "587"))
+    smtp_user: str = os.getenv("SMTP_USER", "")
+    smtp_password: str = os.getenv("SMTP_PASSWORD", "")
+    smtp_from_email: str = os.getenv("SMTP_FROM_EMAIL", "")
+    smtp_from_name: str = os.getenv("SMTP_FROM_NAME", "EventBazaar")
+    smtp_use_tls: bool = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
+    smtp_use_ssl: bool = os.getenv("SMTP_USE_SSL", "false").lower() == "true"
+    admin_emails_csv: str = os.getenv("ADMIN_EMAILS", "")
+
+    @property
+    def admin_emails(self) -> list[str]:
+        if not self.admin_emails_csv:
+            return []
+        return [email.strip().lower() for email in self.admin_emails_csv.split(",") if email.strip()]
+
 
 settings = Settings()

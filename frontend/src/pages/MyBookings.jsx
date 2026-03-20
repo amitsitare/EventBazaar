@@ -5,6 +5,9 @@ import { API_BASE, authHeader } from '../auth.js';
 export default function MyBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [reviewDrafts, setReviewDrafts] = useState({});
+  const [submittingReviewId, setSubmittingReviewId] = useState(null);
+  const [reviewMessage, setReviewMessage] = useState('');
 
   const load = async () => {
     setLoading(true);
@@ -51,6 +54,94 @@ export default function MyBookings() {
     }
   };
 
+  const statusLabel = (status) => {
+    if (status === 'confirmed') return 'Booking successful';
+    if (status === 'pending') return 'Pending';
+    if (status === 'cancelled') return 'Cancelled';
+    return status;
+  };
+
+  const getDaysLeftMeta = (eventDate) => {
+    if (!eventDate) return null;
+    const dateOnly = new Date(`${eventDate}T00:00:00`);
+    if (Number.isNaN(dateOnly.getTime())) return null;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diffMs = dateOnly.getTime() - today.getTime();
+    const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+    if (daysLeft < 0) return { expired: true, text: 'Service date passed. This booking can no longer be used.' };
+    if (daysLeft === 0) return { expired: false, text: 'Service is scheduled for today.' };
+    return { expired: false, text: `${daysLeft} day${daysLeft > 1 ? 's' : ''} left for service date.` };
+  };
+
+  const isReviewEligible = (booking) => {
+    if (!booking || booking.status !== 'confirmed' || !booking.event_date) return false;
+    const eventDate = new Date(`${booking.event_date}T00:00:00`);
+    if (Number.isNaN(eventDate.getTime())) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return eventDate.getTime() < today.getTime();
+  };
+
+  const setDraftField = (bookingId, field, value) => {
+    setReviewDrafts((prev) => ({
+      ...prev,
+      [bookingId]: {
+        ...(prev[bookingId] || {}),
+        [field]: value,
+      },
+    }));
+  };
+
+  const submitReview = async (booking) => {
+    if (!isReviewEligible(booking)) {
+      setReviewMessage('Review can be submitted after the event date for confirmed bookings.');
+      return;
+    }
+    const draft = reviewDrafts[booking.id] || {};
+    const rating = Number(draft.rating || booking.review_rating || 0);
+    if (!rating || rating < 1 || rating > 5) {
+      setReviewMessage('Please select a rating between 1 and 5 stars.');
+      return;
+    }
+    setSubmittingReviewId(booking.id);
+    setReviewMessage('');
+    try {
+      await axios.post(
+        `${API_BASE}/api/bookings/${booking.id}/review`,
+        {
+          rating,
+          comment: (draft.comment ?? booking.review_comment ?? '').trim() || null,
+        },
+        { headers: authHeader() }
+      );
+      await load();
+      setReviewMessage(`Review saved for booking #${booking.id}.`);
+    } catch (err) {
+      setReviewMessage(err.response?.data?.detail || 'Failed to save review');
+    } finally {
+      setSubmittingReviewId(null);
+    }
+  };
+
+  const downloadInvoice = async (bookingId) => {
+    const resp = await axios.get(`${API_BASE}/api/bookings/${bookingId}/invoice`, {
+      headers: authHeader(),
+      responseType: 'blob',
+    });
+    const blob = new Blob([resp.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `invoice_booking_${bookingId}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <main className="bg-background-light min-h-screen py-6 md:py-10">
       <div className="max-w-5xl mx-auto px-4">
@@ -69,6 +160,11 @@ export default function MyBookings() {
         </header>
 
         <section className="rounded-3xl bg-white border border-slate-100 shadow-sm p-4 md:p-6">
+          {reviewMessage && (
+            <div className="mb-3 rounded-xl border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-700">
+              {reviewMessage}
+            </div>
+          )}
           {loading && (
             <div className="py-10 text-center text-sm text-slate-500">
               <div className="mb-3 inline-flex size-10 items-center justify-center rounded-full border border-primary/20">
@@ -96,7 +192,9 @@ export default function MyBookings() {
 
           {!loading && sortedBookings.length > 0 && (
             <div className="space-y-3">
-              {sortedBookings.map((b) => (
+              {sortedBookings.map((b) => {
+                const daysMeta = getDaysLeftMeta(b.event_date);
+                return (
                 <article
                   key={b.id}
                   className="rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-white transition-colors px-4 py-3 md:px-5 md:py-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between"
@@ -109,6 +207,11 @@ export default function MyBookings() {
                       <span className="text-[11px] text-slate-400">
                         Service ID: {b.service_id}
                       </span>
+                      {b.service_name && (
+                        <span className="text-[11px] text-slate-500 font-medium">
+                          {b.service_name}
+                        </span>
+                      )}
                     </div>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-700">
                       <span className="inline-flex items-center gap-1.5">
@@ -137,6 +240,11 @@ export default function MyBookings() {
                         {b.notes}
                       </p>
                     )}
+                    {daysMeta && (
+                      <p className={`mt-2 text-xs font-semibold ${daysMeta.expired ? 'text-rose-600' : 'text-emerald-700'}`}>
+                        {daysMeta.text}
+                      </p>
+                    )}
                   </div>
 
                   <div className="mt-2 md:mt-0 flex flex-col items-end gap-2 shrink-0">
@@ -145,11 +253,62 @@ export default function MyBookings() {
                         b.status
                       )}`}
                     >
-                      {b.status}
+                      {statusLabel(b.status)}
                     </span>
+                    <button
+                      onClick={() => downloadInvoice(b.id)}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-100 transition"
+                    >
+                      <span className="material-symbols-outlined text-[15px]">download</span>
+                      Download invoice
+                    </button>
                   </div>
+                  {isReviewEligible(b) && (
+                    <div className="mt-3 w-full rounded-xl border border-amber-200 bg-amber-50/60 p-3">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-700 mb-2">
+                        Review this service
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        {[1, 2, 3, 4, 5].map((star) => {
+                          const selected = Number(reviewDrafts[b.id]?.rating || b.review_rating || 0) >= star;
+                          return (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setDraftField(b.id, 'rating', star)}
+                              className={`h-8 w-8 rounded-lg border text-sm font-bold transition ${
+                                selected
+                                  ? 'border-amber-400 bg-amber-100 text-amber-700'
+                                  : 'border-slate-200 bg-white text-slate-500 hover:border-amber-300'
+                              }`}
+                            >
+                              ★
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <textarea
+                        rows={2}
+                        placeholder="Share your experience (optional)"
+                        value={reviewDrafts[b.id]?.comment ?? b.review_comment ?? ''}
+                        onChange={(e) => setDraftField(b.id, 'comment', e.target.value)}
+                        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
+                      />
+                      <div className="mt-2 flex justify-end">
+                        <button
+                          type="button"
+                          disabled={submittingReviewId === b.id}
+                          onClick={() => submitReview(b)}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 bg-amber-100 px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-200 disabled:opacity-60"
+                        >
+                          {submittingReviewId === b.id ? 'Saving...' : b.review_rating ? 'Update review' : 'Submit review'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </article>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>

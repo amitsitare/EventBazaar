@@ -1,6 +1,6 @@
 from typing import Optional, Literal, List
 from datetime import date
-from pydantic import BaseModel, EmailStr, constr
+from pydantic import BaseModel, EmailStr, Field, constr
 
 
 UserRole = Literal["provider", "customer"]
@@ -59,6 +59,8 @@ class ServiceCreate(ServiceBase):
 class ServicePublic(ServiceBase):
     id: int
     provider_id: int
+    avg_rating: Optional[float] = None
+    review_count: int = 0
 
 
 class ServiceItemBase(BaseModel):
@@ -84,6 +86,7 @@ class BookingBase(BaseModel):
     notes: Optional[str] = None
     address: Optional[str] = None
     duration_hours: Optional[int] = None
+    paid_amount: Optional[float] = None
 
 
 class BookingCreate(BookingBase):
@@ -94,6 +97,26 @@ class BookingPublic(BookingBase):
     id: int
     customer_id: int
     status: Literal["pending", "confirmed", "cancelled"]
+    service_name: Optional[str] = None
+    service_location: Optional[str] = None
+    review_rating: Optional[int] = None
+    review_comment: Optional[str] = None
+
+
+class ReviewCreate(BaseModel):
+    rating: int = Field(ge=1, le=5)
+    comment: Optional[str] = None
+
+
+class ReviewPublic(BaseModel):
+    id: int
+    booking_id: int
+    service_id: int
+    customer_id: int
+    customer_name: str
+    rating: int
+    comment: Optional[str] = None
+    created_at: str
 
 
 

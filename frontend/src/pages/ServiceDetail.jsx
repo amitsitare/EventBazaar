@@ -15,14 +15,17 @@ export default function ServiceDetail() {
   const [notes, setNotes] = useState('');
   const [message, setMessage] = useState('');
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [reviews, setReviews] = useState([]);
 
   const load = async () => {
-    const [svcRes, itemsRes] = await Promise.all([
+    const [svcRes, itemsRes, reviewsRes] = await Promise.all([
       axios.get(`${API_BASE}/api/services/${id}`),
       axios.get(`${API_BASE}/api/services/${id}/items/public`).catch(() => ({ data: [] })),
+      axios.get(`${API_BASE}/api/services/${id}/reviews`).catch(() => ({ data: [] })),
     ]);
     setService(svcRes.data);
     setItems(Array.isArray(itemsRes.data) ? itemsRes.data : []);
+    setReviews(Array.isArray(reviewsRes.data) ? reviewsRes.data : []);
     setItemQuantities({});
   };
   useEffect(() => { load(); }, [id]);
@@ -154,16 +157,14 @@ export default function ServiceDetail() {
         notes: { serviceId: id },
       });
 
+      const finalNotes = selectedItemsSummary
+        ? (notes ? `${notes}\n\nRequested items: ${selectedItemsSummary}` : `Requested items: ${selectedItemsSummary}`)
+        : notes;
+
       await axios.post(`${API_BASE}/api/payments/verify`, {
         razorpay_order_id: payResponse.razorpay_order_id,
         razorpay_payment_id: payResponse.razorpay_payment_id,
         razorpay_signature: payResponse.razorpay_signature,
-      }, { headers: authHeader() });
-
-      const finalNotes = selectedItemsSummary
-        ? (notes ? `${notes}\n\nRequested items: ${selectedItemsSummary}` : `Requested items: ${selectedItemsSummary}`)
-        : notes;
-      await axios.post(`${API_BASE}/api/bookings/`, {
         service_id: Number(id),
         event_date: eventDate,
         quantity,
@@ -261,6 +262,29 @@ export default function ServiceDetail() {
                 <p className="text-sm leading-relaxed text-slate-600">
                   {service.description || 'No description provided for this service.'}
                 </p>
+                <div className="rounded-xl border border-amber-100 bg-amber-50/60 p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-amber-800">
+                      ★ {Number(service.avg_rating || 0).toFixed(1)} average rating
+                    </p>
+                    <p className="text-xs font-medium text-amber-700">
+                      {Number(service.review_count || 0)} review{Number(service.review_count || 0) === 1 ? '' : 's'}
+                    </p>
+                  </div>
+                  {reviews.length > 0 && (
+                    <div className="mt-2 space-y-2">
+                      {reviews.slice(0, 3).map((r) => (
+                        <div key={r.id} className="rounded-lg border border-amber-100 bg-white px-2.5 py-2">
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs font-semibold text-slate-700">{r.customer_name}</p>
+                            <p className="text-xs font-semibold text-amber-700">{'★'.repeat(Number(r.rating || 0))}</p>
+                          </div>
+                          {r.comment && <p className="mt-1 text-xs text-slate-600">{r.comment}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3">
                   <p className="font-semibold text-slate-800">
                     <span className="text-blue-700">{service.price != null ? formatInr(service.price) : 'From items'}</span>

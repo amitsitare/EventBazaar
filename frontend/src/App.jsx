@@ -12,6 +12,7 @@ import ProviderDashboard from './pages/ProviderDashboard.jsx';
 import ServiceItems from './pages/ServiceItems.jsx';
 import MyBookings from './pages/MyBookings.jsx';
 import ContactUs from './pages/ContactUs.jsx';
+import PaymentLedger from './pages/PaymentLedger.jsx';
 import { getAuth } from './auth.js';
 
 function PrivateRoute({ children, role }) {
@@ -42,6 +43,9 @@ export default function App() {
           } />
           <Route path="/my-bookings" element={
             <PrivateRoute role="customer"><MyBookings /></PrivateRoute>
+          } />
+          <Route path="/payments" element={
+            <PrivateRoute role="customer"><PaymentLedger /></PrivateRoute>
           } />
         </Routes>
       </main>

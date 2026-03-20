@@ -72,6 +72,14 @@ export default function Navbar() {
               >
                 {auth.role === 'customer' ? 'My Bookings' : 'Dashboard'}
               </NavLink>
+              {auth.role === 'customer' && (
+                <NavLink
+                  to="/payments"
+                  className="hidden sm:inline-flex items-center justify-center text-sm font-semibold text-primary px-4 py-2 rounded-full border border-primary/20 hover:bg-primary/5 transition-colors no-underline"
+                >
+                  Payments
+                </NavLink>
+              )}
               <button
                 onClick={handleLogout}
                 className="inline-flex items-center justify-center bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-md shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-0.5 transition-all"

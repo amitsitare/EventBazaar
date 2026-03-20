@@ -5,7 +5,7 @@ import os
 from uuid import uuid4
 
 from ..db import get_db_conn
-from ..schemas import ServiceCreate, ServicePublic, ServiceItemCreate, ServiceItemPublic
+from ..schemas import ServiceCreate, ServicePublic, ServiceItemCreate, ServiceItemPublic, ReviewPublic
 from .auth import get_current_user
 
 
@@ -18,6 +18,14 @@ ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
 
 ITEM_UPLOAD_DIR = Path(__file__).parent.parent / "uploads" / "items"
 ITEM_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+RATING_STATS_JOIN = """
+LEFT JOIN (
+    SELECT service_id, ROUND(AVG(rating)::numeric, 2) AS avg_rating, COUNT(*)::int AS review_count
+    FROM reviews
+    GROUP BY service_id
+) rs ON rs.service_id = s.id
+"""
 
 
 @router.post("/upload-images")
@@ -119,24 +127,32 @@ async def create_service(data: ServiceCreate, payload=Depends(get_current_user),
             "photo_url": row[5],
             "photo_urls": row[6],
             "location": row[7],
+            "avg_rating": 0,
+            "review_count": 0,
         })
 
 
 @router.get("/", response_model=List[ServicePublic])
 async def list_services(query: Optional[str] = None, location: Optional[str] = None, conn=Depends(get_db_conn)):
-    base = "SELECT id, provider_id, name, description, price, photo_url, photo_urls, location FROM services"
+    base = f"""
+    SELECT
+        s.id, s.provider_id, s.name, s.description, s.price, s.photo_url, s.photo_urls, s.location,
+        COALESCE(rs.avg_rating, 0) AS avg_rating, COALESCE(rs.review_count, 0) AS review_count
+    FROM services s
+    {RATING_STATS_JOIN}
+    """
     filters = []
     params = []
     if query:
-        filters.append("(name ILIKE %s OR description ILIKE %s)")
+        filters.append("(s.name ILIKE %s OR s.description ILIKE %s)")
         like = f"%{query}%"
         params.extend([like, like])
     if location:
-        filters.append("location ILIKE %s")
+        filters.append("s.location ILIKE %s")
         params.append(f"%{location}%")
     if filters:
         base += " WHERE " + " AND ".join(filters)
-    base += " ORDER BY id DESC"
+    base += " ORDER BY COALESCE(rs.avg_rating, 0) DESC, COALESCE(rs.review_count, 0) DESC, s.id DESC"
     async with conn.cursor() as cur:
         await cur.execute(base, params)
         rows = await cur.fetchall()
@@ -150,6 +166,8 @@ async def list_services(query: Optional[str] = None, location: Optional[str] = N
                 photo_url=r[5],
                 photo_urls=r[6],
                 location=r[7],
+                avg_rating=float(r[8] or 0),
+                review_count=int(r[9] or 0),
             )
             for r in rows
         ]
@@ -162,7 +180,15 @@ async def get_my_services(payload=Depends(get_current_user), conn=Depends(get_db
     provider_id = int(payload["sub"])
     async with conn.cursor() as cur:
         await cur.execute(
-            "SELECT id, provider_id, name, description, price, photo_url, photo_urls, location FROM services WHERE provider_id = %s ORDER BY id DESC",
+            f"""
+            SELECT
+                s.id, s.provider_id, s.name, s.description, s.price, s.photo_url, s.photo_urls, s.location,
+                COALESCE(rs.avg_rating, 0) AS avg_rating, COALESCE(rs.review_count, 0) AS review_count
+            FROM services s
+            {RATING_STATS_JOIN}
+            WHERE s.provider_id = %s
+            ORDER BY s.id DESC
+            """,
             (provider_id,),
         )
         rows = await cur.fetchall()
@@ -176,6 +202,8 @@ async def get_my_services(payload=Depends(get_current_user), conn=Depends(get_db
                 photo_url=r[5],
                 photo_urls=r[6],
                 location=r[7],
+                avg_rating=float(r[8] or 0),
+                review_count=int(r[9] or 0),
             )
             for r in rows
         ]
@@ -185,7 +213,14 @@ async def get_my_services(payload=Depends(get_current_user), conn=Depends(get_db
 async def get_service(service_id: int, conn=Depends(get_db_conn)):
     async with conn.cursor() as cur:
         await cur.execute(
-            "SELECT id, provider_id, name, description, price, photo_url, photo_urls, location FROM services WHERE id=%s",
+            f"""
+            SELECT
+                s.id, s.provider_id, s.name, s.description, s.price, s.photo_url, s.photo_urls, s.location,
+                COALESCE(rs.avg_rating, 0) AS avg_rating, COALESCE(rs.review_count, 0) AS review_count
+            FROM services s
+            {RATING_STATS_JOIN}
+            WHERE s.id=%s
+            """,
             (service_id,),
         )
         row = await cur.fetchone()
@@ -200,6 +235,8 @@ async def get_service(service_id: int, conn=Depends(get_db_conn)):
             photo_url=row[5],
             photo_urls=row[6],
             location=row[7],
+            avg_rating=float(row[8] or 0),
+            review_count=int(row[9] or 0),
         )
 
 
@@ -240,6 +277,8 @@ async def update_service(service_id: int, data: ServiceCreate, payload=Depends(g
             photo_url=row[5],
             photo_urls=row[6],
             location=row[7],
+            avg_rating=0,
+            review_count=0,
         )
 
 
@@ -423,3 +462,36 @@ async def delete_service(service_id: int, payload=Depends(get_current_user), con
         await cur.execute("DELETE FROM services WHERE id=%s", (service_id,))
         await conn.commit()
         return {"status": "deleted"}
+
+
+@router.get("/{service_id}/reviews", response_model=List[ReviewPublic])
+async def list_service_reviews(service_id: int, conn=Depends(get_db_conn)):
+    async with conn.cursor() as cur:
+        await cur.execute("SELECT id FROM services WHERE id=%s", (service_id,))
+        if not await cur.fetchone():
+            raise HTTPException(status_code=404, detail="Service not found")
+        await cur.execute(
+            """
+            SELECT r.id, r.booking_id, r.service_id, r.customer_id, u.name, r.rating, r.comment, r.created_at
+            FROM reviews r
+            JOIN users u ON u.id = r.customer_id
+            WHERE r.service_id = %s
+            ORDER BY r.created_at DESC
+            LIMIT 100
+            """,
+            (service_id,),
+        )
+        rows = await cur.fetchall()
+    return [
+        ReviewPublic(
+            id=r[0],
+            booking_id=r[1],
+            service_id=r[2],
+            customer_id=r[3],
+            customer_name=r[4],
+            rating=int(r[5]),
+            comment=r[6],
+            created_at=r[7].isoformat() if r[7] else "",
+        )
+        for r in rows
+    ]

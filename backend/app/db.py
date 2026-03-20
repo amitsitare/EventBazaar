@@ -80,7 +80,7 @@ def _ensure_tables_exist_sync(conn) -> None:
                 email TEXT UNIQUE NOT NULL,
                 mobile TEXT NOT NULL,
                 whatsapp_number TEXT,
-                address TEXT NOT NULL,
+                address TEXT,
                 role TEXT NOT NULL CHECK (role IN ('provider','customer')),
                 password_hash TEXT NOT NULL,
                 latitude DOUBLE PRECISION,
@@ -102,6 +102,12 @@ def _ensure_tables_exist_sync(conn) -> None:
             """
             ALTER TABLE users
             ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION;
+            """
+        )
+        cur.execute(
+            """
+            ALTER TABLE users
+            ALTER COLUMN address DROP NOT NULL;
             """
         )
 
@@ -225,7 +231,7 @@ async def _ensure_tables_exist_async(conn: "psycopg.AsyncConnection") -> None:
                 email TEXT UNIQUE NOT NULL,
                 mobile TEXT NOT NULL,
                 whatsapp_number TEXT,
-                address TEXT NOT NULL,
+                address TEXT,
                 role TEXT NOT NULL CHECK (role IN ('provider','customer')),
                 password_hash TEXT NOT NULL,
                 latitude DOUBLE PRECISION,
@@ -249,6 +255,12 @@ async def _ensure_tables_exist_async(conn: "psycopg.AsyncConnection") -> None:
             ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION;
             """
         )
+        await cur.execute(
+            """
+            ALTER TABLE users
+            ALTER COLUMN address DROP NOT NULL;
+            """
+        )
 
         await cur.execute(
             """
@@ -257,12 +269,20 @@ async def _ensure_tables_exist_async(conn: "psycopg.AsyncConnection") -> None:
                 provider_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
                 name TEXT NOT NULL,
                 description TEXT,
-                price NUMERIC(12,2) NOT NULL,
+                price NUMERIC(12,2),
                 photo_url TEXT,
                 photo_urls TEXT[],
                 location TEXT NOT NULL,
                 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             );
+            """
+        )
+
+        # Allow NULL price (pricing is per item, not per service).
+        await cur.execute(
+            """
+            ALTER TABLE services
+            ALTER COLUMN price DROP NOT NULL;
             """
         )
 

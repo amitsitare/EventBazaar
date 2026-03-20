@@ -59,7 +59,7 @@ export default function MyBookings() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-primary mb-1">
               Your events
             </p>
-            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900">
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-primary">
               My Bookings
             </h1>
             <p className="text-sm text-slate-500 mt-1">

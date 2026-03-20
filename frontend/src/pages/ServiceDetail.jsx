@@ -31,6 +31,9 @@ export default function ServiceDetail() {
     const n = Math.max(0, Number(qty) || 0);
     setItemQuantities((prev) => ({ ...prev, [itemId]: n }));
   };
+  const incrementItemQty = (itemId) => {
+    setItemQuantities((prev) => ({ ...prev, [itemId]: (prev[itemId] || 0) + 1 }));
+  };
 
   const selectedItemsSummary = items
     .filter((it) => (itemQuantities[it.id] || 0) > 0)
@@ -78,9 +81,11 @@ export default function ServiceDetail() {
   };
 
   const isCustomer = getAuth().token && getAuth().role === 'customer';
+  const isLoggedIn = !!getAuth().token;
   const canPayWithCart = selectedItemsTotal > 0;
   const canPayWithServicePrice = service && service.price != null && !Number.isNaN(Number(service.price));
   const canBook = canPayWithCart || canPayWithServicePrice;
+  const formatInr = (value) => `₹${Number(value || 0).toFixed(0)}`;
 
   const book = async () => {
     if (bookingLoading) return;
@@ -195,73 +200,56 @@ export default function ServiceDetail() {
   const primaryImage = gallery[0] || null;
 
   return (
-    <main className="bg-background-light min-h-screen py-4 md:py-6">
-      <div className="max-w-5xl mx-auto px-3 md:px-4">
-        <header className="mb-4 md:mb-5 rounded-3xl bg-gradient-to-r from-background-dark via-slate-900 to-primary px-4 py-4 md:px-6 md:py-5 text-white shadow-sm">
-          <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-2 gap-md-3">
-            <div>
-              <p className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.26em] text-white/70 mb-1">
-                Service details
-              </p>
-              <h1 className="text-xl md:text-2xl font-black tracking-tight">
-                {service.name}
-              </h1>
-              <p className="text-xs md:text-sm text-white/80 mt-0.5 mb-0">
-                {service.location ? `Available in ${service.location}` : 'Event service'}
-              </p>
-            </div>
-            <div className="d-flex flex-wrap align-items-center gap-2 text-[11px] md:text-xs">
-              <span className="inline-flex align-items-center gap-1 rounded-pill bg-white/10 px-3 py-1 fw-semibold">
-                <span className="material-symbols-outlined text-sm">payments</span>
-                {service.price != null ? `₹${service.price}` : 'From items'}
-              </span>
-              <span className="inline-flex align-items-center gap-1 rounded-pill bg-white/10 px-3 py-1 fw-semibold">
-                <span className="material-symbols-outlined text-sm">event</span>
-                Instant confirmation
-              </span>
-            </div>
-          </div>
-        </header>
-
-        <section className="row g-3">
-          <div className="col-md-7">
-            <div className="card border-0 shadow-sm rounded-3 overflow-hidden mb-3">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top_right,_#eef2ff,_#f8fafc_40%,_#ffffff_75%)] py-6 md:py-10">
+      <div className="mx-auto max-w-6xl space-y-6 px-4 md:px-6">
+        <section className="grid grid-cols-1 gap-5 lg:grid-cols-12 lg:items-stretch">
+          <div className="lg:col-span-7">
+            <div className="h-full overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-lg transition duration-300 hover:shadow-2xl lg:min-h-[520px]">
               {primaryImage ? (
-                <img
-                  src={primaryImage}
-                  className="img-fluid"
-                  alt={service.name}
-                  style={{
-                    maxHeight: '360px',
-                    width: '100%',
-                    objectFit: 'cover',
-                    objectPosition: 'center',
-                  }}
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
-                />
+                <div className="relative overflow-hidden">
+                  <img
+                    src={primaryImage}
+                    className="h-[250px] w-full object-cover object-center transition duration-500 hover:scale-[1.03] md:h-[290px]"
+                    alt={service.name}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 p-4 text-white md:p-5">
+                    <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.26em] text-white/80 md:text-[11px]">
+                      Service details
+                    </p>
+                    <h1 className="text-2xl font-black tracking-tight drop-shadow md:text-3xl">
+                      {service.name}
+                    </h1>
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                      <span className="rounded-full bg-white/20 px-3 py-1 font-semibold backdrop-blur">
+                        {service.location ? `Available in ${service.location}` : 'Event service'}
+                      </span>
+                      <span className="rounded-full bg-white/20 px-3 py-1 font-semibold backdrop-blur">
+                        {service.price != null ? formatInr(service.price) : 'From items'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               ) : (
-                <div
-                  className="d-flex align-items-center justify-content-center bg-light"
-                  style={{ height: '260px' }}
-                >
-                  <i className="fas fa-image text-muted" style={{ fontSize: '3rem' }}></i>
+                <div className="flex h-[260px] items-center justify-center bg-slate-100 md:h-[320px]">
+                  <span className="material-symbols-outlined text-6xl text-slate-400">image</span>
                 </div>
               )}
-              <div className="card-body">
+              <div className="space-y-3 p-4 md:p-5">
                 {gallery.length > 1 && (
-                  <div className="mb-3 d-flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {gallery.slice(1).map((img, idx) => (
                       <div
                         key={idx}
-                        className="overflow-hidden rounded-3 border"
-                        style={{ width: '72px', height: '72px' }}
+                        className="h-[74px] w-[74px] overflow-hidden rounded-2xl border border-slate-200 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md"
                       >
                         <img
                           src={img}
                           alt={`${service.name} ${idx + 2}`}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          className="h-full w-full object-cover transition duration-500 hover:scale-110"
                           onError={(e) => {
                             e.target.style.display = 'none';
                           }}
@@ -270,17 +258,17 @@ export default function ServiceDetail() {
                     ))}
                   </div>
                 )}
-                <p className="mb-2 text-sm text-slate-600">
+                <p className="text-sm leading-relaxed text-slate-600">
                   {service.description || 'No description provided for this service.'}
                 </p>
-                <div className="d-flex flex-wrap align-items-center justify-content-between gap-2">
-                  <p className="mb-0 fw-semibold">
-                    <span className="text-primary">{service.price != null ? `₹${service.price}` : 'From items'}</span>
+                <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3">
+                  <p className="font-semibold text-slate-800">
+                    <span className="text-blue-700">{service.price != null ? formatInr(service.price) : 'From items'}</span>
                     {service.location && (
-                      <span className="text-muted small ms-1"> · {service.location}</span>
+                      <span className="ml-1 text-sm text-slate-500"> · {service.location}</span>
                     )}
                   </p>
-                  <span className="badge rounded-pill bg-primary/10 text-primary fw-semibold">
+                  <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
                     EventBazaar vendor
                   </span>
                 </div>
@@ -288,54 +276,57 @@ export default function ServiceDetail() {
             </div>
           </div>
 
-          <div className="col-md-5">
-            <div className="card border-0 shadow-lg rounded-3">
-              <div className="card-body">
-                <h5 className="mb-1">Book this service</h5>
-                <p className="text-muted small mb-3">
+          <div className="lg:col-span-5">
+            <div className="h-full rounded-3xl border border-slate-200/80 bg-white p-4 shadow-xl ring-1 ring-slate-100 transition duration-300 hover:shadow-2xl md:p-5 lg:min-h-[520px]">
+              <h2 className="mb-1 text-xl font-bold text-slate-900">Book this service</h2>
+              <p className="mb-3 text-sm text-slate-500">
                   Secure online payment. You&apos;ll get a confirmation instantly after booking.
-                </p>
-                {!isCustomer && (
-                  <div className="alert alert-warning py-2 small mb-3">
+              </p>
+                {!isLoggedIn && (
+                  <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
                     Login as customer is required to add items to cart and book.
                   </div>
                 )}
-                {message && <div className="alert alert-info py-2 small">{message}</div>}
+                {message && (
+                  <div className="mb-3 rounded-xl border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-700 animate-pulse">
+                    {message}
+                  </div>
+                )}
 
-                <div className="mb-2">
-                  <label className="form-label small text-uppercase text-muted mb-1">
+                <div className="mb-3">
+                  <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
                     Event Date
                   </label>
                   <input
                     type="date"
-                    className="form-control form-control-sm rounded-2"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     value={eventDate}
                     onChange={(e) => setEventDate(e.target.value)}
                     required
                   />
                 </div>
 
-                <div className="mb-2">
-                  <label className="form-label small text-uppercase text-muted mb-1">
+                <div className="mb-3">
+                  <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
                     Quantity
                   </label>
                   <input
                     type="number"
                     min="1"
-                    className="form-control form-control-sm rounded-2"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     value={quantity}
                     onChange={(e) => setQuantity(Number(e.target.value))}
                     required
                   />
                 </div>
 
-                <div className="mb-2">
-                  <label className="form-label small text-uppercase text-muted mb-1">
-                    Service Address <span className="text-danger">*</span>
+                <div className="mb-3">
+                  <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                    Service Address <span className="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
-                    className="form-control form-control-sm rounded-2"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="Venue or full address"
@@ -343,25 +334,25 @@ export default function ServiceDetail() {
                   />
                 </div>
 
-                <div className="mb-2">
-                  <label className="form-label small text-uppercase text-muted mb-1">
+                <div className="mb-3">
+                  <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
                     Duration (hours, optional)
                   </label>
                   <input
                     type="number"
                     min="1"
-                    className="form-control form-control-sm rounded-2"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     value={durationHours}
                     onChange={(e) => setDurationHours(e.target.value)}
                   />
                 </div>
 
-                <div className="mb-3">
-                  <label className="form-label small text-uppercase text-muted mb-1">
+                <div className="mb-4">
+                  <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
                     Notes
                   </label>
                   <textarea
-                    className="form-control form-control-sm rounded-2"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     rows={3}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
@@ -369,17 +360,17 @@ export default function ServiceDetail() {
                 </div>
 
                 {canPayWithCart && (
-                  <p className="small mb-2 text-primary fw-semibold">
-                    Package total: ₹{selectedItemsTotal.toFixed(0)}
+                  <p className="mb-2 text-sm font-semibold text-blue-700">
+                    Package total: {formatInr(selectedItemsTotal)}
                   </p>
                 )}
                 {!canBook && items.length > 0 && (
-                  <p className="text-muted small mb-2">
+                  <p className="mb-2 text-sm text-slate-500">
                     Add items below with quantity to book this package.
                   </p>
                 )}
                 <button
-                  className="btn btn-primary w-100"
+                  className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md transition duration-300 hover:-translate-y-0.5 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
                   onClick={book}
                   disabled={bookingLoading || !canBook || !isCustomer}
                 >
@@ -388,67 +379,87 @@ export default function ServiceDetail() {
                     : canPayWithCart
                       ? `Book package — ₹${selectedItemsTotal.toFixed(0)}`
                       : canPayWithServicePrice
-                        ? `Book now — ₹${Number(service.price).toFixed(0)}`
+                        ? `Book now — ${formatInr(service.price)}`
                         : 'Add items to book'}
                 </button>
-              </div>
             </div>
           </div>
         </section>
 
         {items.length > 0 && (
-          <section className="mt-4">
-            <div className="card border-0 shadow-sm rounded-3 overflow-hidden">
-              <div className="card-body">
-                <h5 className="mb-1 d-flex align-items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">inventory_2</span>
+          <section className="mt-6">
+            <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-lg">
+              <div className="p-5 md:p-6">
+                <h3 className="mb-1 flex items-center gap-2 text-lg font-bold text-slate-900">
+                  <span className="material-symbols-outlined text-blue-600">inventory_2</span>
                   Add items as per your requirement
-                </h5>
-                {!isCustomer && (
-                  <p className="small mb-2 text-warning">
+                </h3>
+                {!isLoggedIn && (
+                  <p className="mb-2 text-sm text-amber-700">
                     Login as customer to add items to cart and book this package.
                   </p>
                 )}
-                <p className="text-muted small mb-3">
+                <p className="mb-4 text-sm text-slate-500">
                   Select quantity for each item. Total payment will be based on selected items. Login required to book.
                 </p>
-                <div className="row g-3">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {items.map((item) => (
-                    <div key={item.id} className="col-12 col-sm-6 col-lg-4">
-                      <div className="card border rounded-3 h-100 overflow-hidden">
-                        <div className="position-relative" style={{ height: '140px', backgroundColor: 'var(--bs-light)' }}>
+                    <div key={item.id}>
+                      <div className="group h-full overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm ring-1 ring-slate-100 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <div className="relative h-[150px] bg-slate-100">
                           {item.photo_url ? (
                             <img
                               src={item.photo_url}
                               alt={item.name}
-                              className="w-100 h-100 object-fit-cover"
-                              style={{ objectFit: 'cover' }}
+                              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                               onError={(e) => { e.target.style.display = 'none'; }}
                             />
                           ) : (
-                            <div className="d-flex align-items-center justify-content-center h-100 text-muted">
-                              <span className="material-symbols-outlined" style={{ fontSize: '2.5rem' }}>image</span>
+                            <div className="flex h-full items-center justify-center text-slate-400">
+                              <span className="material-symbols-outlined text-5xl">image</span>
                             </div>
                           )}
+                          <div className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
+                            {item.amount != null ? formatInr(item.amount) : 'Price on request'}
+                          </div>
                         </div>
-                        <div className="card-body py-2 px-3">
-                          <h6 className="card-title mb-1 text-truncate" title={item.name}>{item.name}</h6>
-                          <p className="mb-1 small text-primary fw-semibold">
-                            {item.amount != null ? `₹${item.amount} per item` : 'Price on request'}
-                          </p>
-                          {item.quantity && (
-                            <p className="small text-muted mb-2">Total: {item.quantity}</p>
-                          )}
-                          <div className="d-flex align-items-center gap-2">
-                            <label className="small text-muted mb-0">Qty:</label>
-                            <input
-                              type="number"
-                              min="0"
-                              className="form-control form-control-sm rounded-2"
-                              style={{ width: '80px' }}
-                              value={itemQuantities[item.id] ?? 0}
-                              onChange={(e) => setItemQty(item.id, e.target.value)}
-                            />
+                        <div className="space-y-3 p-4">
+                          <h4 className="truncate text-[15px] font-semibold text-slate-900" title={item.name}>{item.name}</h4>
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs text-slate-500">
+                              {item.amount != null ? `${formatInr(item.amount)} per item` : 'Price on request'}
+                            </p>
+                            {item.quantity && (
+                              <span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] font-medium text-slate-600">
+                                Available: {item.quantity}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-2 py-2">
+                            <label className="px-1 text-xs font-medium text-slate-500">Qty</label>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setItemQty(item.id, (itemQuantities[item.id] ?? 0) - 1)}
+                                className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-100"
+                              >
+                                -
+                              </button>
+                              <input
+                                type="number"
+                                min="0"
+                                className="w-14 rounded-lg border border-slate-200 bg-white px-2 py-1 text-center text-sm outline-none transition duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                value={itemQuantities[item.id] ?? 0}
+                                onChange={(e) => setItemQty(item.id, e.target.value)}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => incrementItemQty(item.id)}
+                                className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-100"
+                              >
+                                +
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -456,10 +467,10 @@ export default function ServiceDetail() {
                   ))}
                 </div>
                 {selectedItemsSummary && (
-                  <div className="mt-3 p-2 rounded-2 bg-light small">
+                  <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/80 px-3 py-2 text-sm text-slate-700">
                     <strong>Selected:</strong> {selectedItemsSummary}
                     {selectedItemsTotal > 0 && (
-                      <span className="ms-1 fw-semibold text-primary"> · Total: ₹{selectedItemsTotal.toFixed(0)}</span>
+                      <span className="ml-1 font-semibold text-blue-700"> · Total: {formatInr(selectedItemsTotal)}</span>
                     )}
                   </div>
                 )}

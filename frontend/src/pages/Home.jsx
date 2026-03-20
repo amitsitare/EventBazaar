@@ -1,666 +1,470 @@
-import { useEffect, useRef } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { 
+  ArrowRight, 
+  Utensils, 
+  Camera, 
+  Trees, 
+  Music, 
+  Building2, 
+  Cake, 
+  ShieldCheck, 
+  Star, 
+  CreditCard, 
+  CalendarPlus,
+  ChevronLeft,
+  ChevronRight,
+  Store,
+  HelpCircle,
+  Home as HomeIcon,
+  Search,
+  Calendar,
+  User
+} from 'lucide-react';
 
 function ScrollReveal({ children, className = '', delay = 0 }) {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-
-    // initial hidden state
-    node.style.opacity = '0';
-    node.style.transform = 'translateY(24px)';
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && node) {
-          node.style.transition = 'opacity 600ms ease-out, transform 600ms ease-out';
-          node.style.transitionDelay = `${delay}ms`;
-          node.style.opacity = '1';
-          node.style.transform = 'translateY(0)';
-          observer.unobserve(node);
-        }
-      },
-      { threshold: 0.15 }
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [delay]);
-
   return (
-    <div ref={ref} className={className}>
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6, delay: delay / 1000, ease: "easeOut" }}
+      className={className}
+    >
       {children}
-    </div>
+    </motion.div>
   );
 }
 
 export default function Home() {
   return (
-    <>
-      <main className="bg-background-light">
+    <div className="min-h-screen font-sans antialiased relative pb-16 md:pb-0">
+      <main className="bg-background-light relative overflow-hidden">
+        {/* Floating Decorative Elements */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <motion.div 
+            animate={{ 
+              y: [0, -40, 0],
+              x: [0, 20, 0],
+              rotate: [0, 10, 0]
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[20%] right-[10%] size-64 bg-primary/5 blur-[100px] rounded-full" 
+          />
+          <motion.div 
+            animate={{ 
+              y: [0, 60, 0],
+              x: [0, -30, 0],
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            className="absolute bottom-[10%] left-[5%] size-96 bg-amber-500/5 blur-[120px] rounded-full" 
+          />
+        </div>
+
         {/* Hero */}
-        <section className="relative px-4 @container">
-          <div className="max-w-7xl mx-auto">
-            <div className="relative overflow-hidden rounded-[2.5rem] min-h-screen bg-background-dark">
-              {/* Background media + gradient */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage:
-                    'linear-gradient(120deg, rgba(9,9,11,0.85), rgba(24,24,27,0.75), rgba(132,11,218,0.55)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuBjQlnhRh-iH1Zkbm6qW7XPtPoAEouPBNp-2gVBtA4asxJpvWxXTeFAwpqfbpCO_q2ASyU8obZ6jVwHGvNXPetaII50f2lo8QZKAC76b8SVQB66QFaBtwUR4NtLJDjeLMXg7OQKvFzrmFMtYd0jmfpUsw3jmXrFD3zbUAKF_I1PXMPfPyAj31s08KfdqlXfjI2zC_-ee03UzNDQSTfATK04bVL_030JLDVXH5IPoO9RKXVn4ePTB4rGmyc5ZExFc1ZIcuh9PGoTTks")',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
+        <section className="relative w-full p-4 md:p-6 lg:p-8">
+          <div className="relative overflow-hidden rounded-[2.5rem] min-h-[70vh] md:min-h-[80vh] bg-background-dark flex items-center">
+            {/* Background image + gradient */}
+              <div className="absolute inset-0">
+              <motion.img
+                initial={{ scale: 1.2, opacity: 0 }}
+                animate={{ scale: 1.05, opacity: 0.4 }}
+                transition={{ duration: 2, ease: "easeOut" }}
+                className="h-full w-full object-cover grayscale-[0.5]"
+                src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2069&auto=format&fit=crop"
+                alt="Vibrant event celebration"
+                referrerPolicy="no-referrer"
               />
-              {/* Noise / texture */}
-              <div className="absolute inset-0 opacity-30 mix-blend-soft-light bg-[radial-gradient(circle_at_0_0,rgba(248,250,252,0.4),transparent_55%),radial-gradient(circle_at_100%_0,rgba(244,114,182,0.35),transparent_55%),radial-gradient(circle_at_100%_100%,rgba(129,140,248,0.3),transparent_55%)]" />
+              <div className="absolute inset-0 bg-gradient-to-r from-background-dark via-background-dark/80 to-transparent" />
+            </div>
+            
+            {/* The "Torch" Effect - Strong light from the left */}
+            <motion.div 
+              initial={{ opacity: 0, x: -100 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1.5, delay: 0.5 }}
+              className="absolute inset-0 pointer-events-none"
+            >
+              <div className="absolute -left-[10%] top-1/2 -translate-y-1/2 w-[60%] h-[120%] bg-[radial-gradient(circle_at_0%_50%,rgba(251,191,36,0.25),transparent_70%)] blur-3xl" />
+              <div className="absolute left-0 top-0 w-full h-full bg-[linear-gradient(90deg,rgba(251,191,36,0.05)_0%,transparent_40%)]" />
+            </motion.div>
 
-              <div className="relative z-10 h-full flex flex-col md:flex-row items-center md:items-stretch px-6 sm:px-10 lg:px-14 py-10 lg:py-14 gap-10 lg:gap-16">
-                {/* Copy side */}
-                <ScrollReveal className="flex-1 flex flex-col justify-center gap-8 text-center md:text-left" delay={80}>
-                  <div className="inline-flex items-center justify-center md:justify-start gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-semibold uppercase tracking-[0.22em] text-white/80">
-                    <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Smart way to plan your event
-                  </div>
+            <div className="relative z-10 w-full px-6 sm:px-10 lg:px-20 py-20">
+              <div className="max-w-4xl space-y-8">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 }}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md text-xs font-bold uppercase tracking-[0.25em] text-primary"
+                >
+                  <span className="size-2 rounded-full bg-primary animate-pulse" />
+                  Illuminating Your Best Moments
+                </motion.div>
 
-                  <div className="space-y-4">
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-white">
-                      Plan Your
-                      <span className="block text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 via-purple-300 to-sky-200">
-                        Perfect Celebration
+                <div className="space-y-6">
+                  <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.85] text-white">
+                    <motion.span 
+                      initial={{ opacity: 0, x: -50 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8, delay: 1 }}
+                      className="block"
+                    >
+                      Light Up
+                    </motion.span>
+                    <motion.span 
+                      initial={{ opacity: 0, x: -50 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8, delay: 1.2 }}
+                      className="relative block mt-2"
+                    >
+                      <span className="absolute -inset-x-6 -inset-y-3 bg-primary/10 blur-3xl rounded-full" />
+                      <span className="relative font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-amber-200">
+                        Your Event
                       </span>
-                    </h1>
-                    <p className="text-base sm:text-lg lg:text-xl font-medium text-white/85 max-w-xl mx-auto md:mx-0">
-                      Discover and book verified caterers, decor artists, photographers, DJs and more
-                      in just a few clicks.
-                    </p>
-                  </div>
+                    </motion.span>
+                  </h1>
+                  <motion.p 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.5, duration: 1 }}
+                    className="text-xl sm:text-2xl font-medium text-white/70 max-w-xl leading-relaxed"
+                  >
+                    Discover <span className="italic font-bold text-primary underline underline-offset-8 decoration-primary/30">brilliant</span> vendors who bring 
+                    energy, warmth, and style to every celebration.
+                  </motion.p>
+                </div>
 
-                  {/* Primary actions */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
-                    <Link
-                      to="/services"
-                      className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white text-primary px-7 py-3.5 text-sm sm:text-base font-extrabold shadow-xl shadow-primary/40 hover:shadow-primary/60 hover:translate-y-[-1px] transition-all"
-                    >
-                      <span>Start Planning</span>
-                      <span className="material-symbols-outlined text-base sm:text-lg">arrow_forward</span>
-                    </Link>
-                    <button
-                      type="button"
-                      className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/5 px-6 py-3 text-sm sm:text-base font-semibold text-white hover:bg-white/10 transition-colors"
-                    >
-                      <span className="material-symbols-outlined text-base sm:text-lg">play_circle</span>
-                      See how it works
-                    </button>
-                  </div>
-
-                  {/* Stats row */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-white/80 text-sm sm:text-xs lg:text-sm">
-                    <div className="flex items-center gap-3">
-                      <div className="flex -space-x-2">
-                        <span className="size-7 rounded-full border border-background-dark bg-fuchsia-300/90" />
-                        <span className="size-7 rounded-full border border-background-dark bg-sky-300/90" />
-                        <span className="size-7 rounded-full border border-background-dark bg-amber-300/90" />
-                      </div>
-                      <div className="leading-tight text-left">
-                        <div className="font-semibold">10k+ happy hosts</div>
-                        <div className="text-[11px] sm:text-xs text-white/70">
-                          real reviews, curated vendors
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex-1 h-px bg-gradient-to-r from-white/10 via-white/30 to-transparent sm:block hidden" />
-                    <div className="flex gap-6 sm:gap-8">
-                      <div>
-                        <div className="text-lg lg:text-xl font-extrabold text-white">4.9</div>
-                        <div className="text-[11px] sm:text-xs text-white/70">Average rating</div>
-                      </div>
-                      <div>
-                        <div className="text-lg lg:text-xl font-extrabold text-white">3k+</div>
-                        <div className="text-[11px] sm:text-xs text-white/70">Verified vendors</div>
-                      </div>
-                    </div>
-                  </div>
-                </ScrollReveal>
-
-                {/* Search / card side */}
-                <ScrollReveal className="flex-1 max-w-xl w-full mx-auto" delay={180}>
-                  <div className="bg-white/10 backdrop-blur-2xl rounded-[1.75rem] border border-white/20 shadow-[0_32px_80px_rgba(15,23,42,0.65)] p-4 sm:p-5 lg:p-6">
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/70 mb-4 sm:mb-5">
-                      Search vendors
-                    </p>
-                    <div className="space-y-3 sm:space-y-4">
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[11px] font-semibold tracking-wide text-white/70">
-                          Service type
-                        </label>
-                        <div className="flex items-center gap-3 rounded-xl bg-white text-slate-900 px-4 py-3 shadow-lg">
-                          <span className="material-symbols-outlined text-primary/70">search</span>
-                          <input
-                            type="text"
-                            placeholder="Catering, decor, photography..."
-                            className="w-full border-none focus:ring-0 focus:outline-none text-sm placeholder:text-slate-400 bg-transparent"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[11px] font-semibold tracking-wide text-white/70">
-                          City or area
-                        </label>
-                        <div className="flex items-center gap-3 rounded-xl bg-white text-slate-900 px-4 py-3 shadow-lg">
-                          <span className="material-symbols-outlined text-primary/70">location_on</span>
-                          <input
-                            type="text"
-                            placeholder="e.g. Mumbai, Andheri West"
-                            className="w-full border-none focus:ring-0 focus:outline-none text-sm placeholder:text-slate-400 bg-transparent"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[11px] font-semibold tracking-wide text-white/70">
-                            Event date
-                          </label>
-                          <div className="flex items-center gap-3 rounded-xl bg-white text-slate-900 px-4 py-3 shadow-lg">
-                            <span className="material-symbols-outlined text-primary/70">calendar_month</span>
-                            <input
-                              type="text"
-                              placeholder="DD/MM/YYYY"
-                              className="w-full border-none focus:ring-0 focus:outline-none text-sm placeholder:text-slate-400 bg-transparent"
-                            />
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[11px] font-semibold tracking-wide text-white/70">
-                            Guests
-                          </label>
-                          <div className="flex items-center gap-3 rounded-xl bg-white text-slate-900 px-4 py-3 shadow-lg">
-                            <span className="material-symbols-outlined text-primary/70">groups</span>
-                            <input
-                              type="text"
-                              placeholder="Approx. count"
-                              className="w-full border-none focus:ring-0 focus:outline-none text-sm placeholder:text-slate-400 bg-transparent"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="pt-2 flex flex-col sm:flex-row gap-3 sm:items-center">
-                        <Link
-                          to="/services"
-                          className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-primary text-white px-6 py-3 text-sm font-bold shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:translate-y-[-1px] transition-all"
-                        >
-                          <span>Search vendors</span>
-                          <span className="material-symbols-outlined text-base">arrow_forward</span>
-                        </Link>
-                        <p className="text-[11px] sm:text-[10px] text-white/60 text-center sm:text-left">
-                          No charges to browse. Pay vendors directly after you book.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </ScrollReveal>
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.8 }}
+                  className="flex flex-col sm:flex-row items-center gap-4 pt-4"
+                >
+                  <Link
+                    to="/services"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-3 rounded-2xl bg-primary text-background-dark px-10 py-4 text-lg font-black shadow-2xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 transition-all active:scale-95"
+                  >
+                    Start Planning
+                    <ArrowRight className="size-5" />
+                  </Link>
+                  <button className="w-full sm:w-auto inline-flex items-center justify-center gap-3 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 text-white px-8 py-4 text-lg font-bold hover:bg-white/10 transition-all">
+                    View Gallery
+                  </button>
+                </motion.div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Browse by Category */}
-        <ScrollReveal className="max-w-7xl mx-auto px-4 py-14" delay={60}>
-          <div className="flex items-end justify-between gap-4 mb-8">
-            <div className="space-y-2">
-              <span className="inline-flex items-center gap-2 rounded-full bg-primary/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.26em] text-primary">
-                <span className="size-1.5 rounded-full bg-primary" />
-                Browse by category
-              </span>
-              <h3 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900">
-                Find the right vendor in seconds.
-              </h3>
-              <p className="text-sm md:text-base text-slate-600 max-w-xl">
-                Quickly explore popular event services—from catering and decor to venues and music.
-              </p>
-            </div>
-            <Link
-              to="/services"
-              className="hidden sm:inline-flex items-center gap-2 rounded-full border border-primary/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-primary hover:bg-primary/5 transition-colors"
-            >
-              <span>View all</span>
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[
-              { icon: 'restaurant', label: 'Catering' },
-              { icon: 'camera_enhance', label: 'Photography' },
-              { icon: 'park', label: 'Decor' },
-              { icon: 'music_note', label: 'Music & DJs' },
-              { icon: 'apartment', label: 'Venues' },
-              { icon: 'cake', label: 'Bakery' },
-            ].map((item) => (
-              <button
-                key={item.label}
-                type="button"
-                className="group cursor-pointer flex flex-col items-center gap-3 p-5 rounded-2xl bg-white border border-slate-100 hover:border-primary/30 hover:shadow-lg hover:-translate-y-1 transition-all"
-              >
-                <div className="size-16 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                  <span className="material-symbols-outlined text-3xl group-hover:text-white transition-colors">
-                    {item.icon}
+        {/* Marquee Social Proof */}
+        <div className="py-12 border-y border-slate-100 bg-white overflow-hidden">
+          <div className="flex whitespace-nowrap animate-marquee">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="flex items-center gap-12 px-6">
+                {['VOGUE', 'BRIDES', 'HARPER\'S BAZAAR', 'THE KNOT', 'WEDDINGWIRE', 'ELLE'].map((brand) => (
+                  <span key={brand} className="text-2xl font-black text-slate-200 tracking-tighter hover:text-primary transition-colors cursor-default">
+                    {brand}
                   </span>
-                </div>
-                <span className="font-semibold text-sm text-slate-900">{item.label}</span>
-              </button>
+                ))}
+              </div>
             ))}
           </div>
+        </div>
 
-          <div className="mt-6 flex items-center justify-between text-[11px] md:text-xs text-slate-500">
-            <span>Tap a category to start exploring vendors tailored to your event.</span>
+        {/* Categories Bento Grid */}
+        <section className="max-w-7xl mx-auto px-6 py-32">
+          <ScrollReveal className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
+            <div className="space-y-4">
+              <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-primary">
+                <span className="size-1.5 rounded-full bg-primary" />
+                The Collection
+              </span>
+              <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 leading-[0.9]">
+                Everything you need <br />for the perfect day.
+              </h2>
+            </div>
             <Link
               to="/services"
-              className="sm:hidden inline-flex items-center gap-1 font-semibold text-primary"
+              className="inline-flex items-center gap-2 rounded-full border-2 border-slate-200 px-8 py-4 text-sm font-bold uppercase tracking-[0.1em] text-slate-600 hover:border-primary hover:text-primary transition-all"
             >
-              <span>View all</span>
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              Explore all
+              <ArrowRight className="size-4" />
             </Link>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-6 h-[800px] md:h-[600px]">
+            {/* Large Item 1 */}
+            <ScrollReveal className="md:col-span-2 md:row-span-2 group relative overflow-hidden rounded-[3rem] bg-orange-50">
+              <img 
+                src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=2070&auto=format&fit=crop" 
+                className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700"
+                alt="Catering"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-orange-900/80 via-transparent to-transparent" />
+              <div className="absolute bottom-10 left-10 text-white">
+                <Utensils className="size-12 mb-4 text-primary" />
+                <h3 className="text-3xl font-black tracking-tight">Catering</h3>
+                <p className="text-white/70 font-medium">From street food to fine dining</p>
+              </div>
+            </ScrollReveal>
+
+            {/* Medium Item 1 */}
+            <ScrollReveal delay={100} className="md:col-span-2 group relative overflow-hidden rounded-[3rem] bg-amber-50">
+              <img 
+                src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=2070&auto=format&fit=crop" 
+                className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700"
+                alt="Venues"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-amber-900/80 via-transparent to-transparent" />
+              <div className="absolute bottom-8 left-8 text-white">
+                <Building2 className="size-10 mb-2 text-primary" />
+                <h3 className="text-2xl font-black tracking-tight">Venues</h3>
+              </div>
+            </ScrollReveal>
+
+            {/* Small Items */}
+            <ScrollReveal delay={200} className="group relative overflow-hidden rounded-[3rem] bg-amber-50">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center group-hover:bg-primary transition-colors">
+                <Camera className="size-12 text-amber-600 group-hover:text-background-dark transition-colors" />
+                <span className="font-black text-slate-900 group-hover:text-background-dark">Photography</span>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal delay={300} className="group relative overflow-hidden rounded-[3rem] bg-emerald-50">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center group-hover:bg-primary transition-colors">
+                <Trees className="size-12 text-emerald-600 group-hover:text-background-dark transition-colors" />
+                <span className="font-black text-slate-900 group-hover:text-background-dark">Decor</span>
+              </div>
+            </ScrollReveal>
           </div>
-        </ScrollReveal>
+        </section>
 
-        {/* Trusted partner / features */}
-        <ScrollReveal className="py-20 bg-slate-50" delay={60}>
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex flex-col items-center text-center mb-14">
-              <span className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.26em] text-primary">
-                <span className="size-1.5 rounded-full bg-primary" />
-                Why hosts trust EventBazaar
-              </span>
-              <h2 className="mt-5 text-3xl md:text-4xl lg:text-[2.6rem] font-black text-slate-900 leading-tight">
-                Your trusted partner for
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-fuchsia-500 to-sky-500">
-                  unforgettable events.
+        {/* Trust Section - Interactive Grid */}
+        <section className="py-32 bg-background-dark text-white overflow-hidden relative">
+          <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
+             <div className="absolute top-1/2 -left-[10%] -translate-y-1/2 w-[50%] h-[100%] bg-[radial-gradient(circle_at_0%_50%,#fbbf24,transparent_70%)]" />
+          </div>
+          
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+              <ScrollReveal className="space-y-8">
+                <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.25em] text-primary">
+                  Brilliance in every detail
                 </span>
-              </h2>
-              <p className="mt-4 max-w-2xl text-sm md:text-base text-slate-600">
-                From shortlisting vendors to confirming bookings, we stay with you at every step so you
-                can focus on enjoying the celebration.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7">
-              {[
-                {
-                  icon: 'verified_user',
-                  title: 'Verified Vendors',
-                  text: 'Every vendor is identity-checked and quality-screened before going live.',
-                },
-                {
-                  icon: 'star',
-                  title: 'Rated Services',
-                  text: 'Decide confidently with authentic reviews and transparent star ratings.',
-                },
-                {
-                  icon: 'payments',
-                  title: 'Best Prices',
-                  text: 'Instantly compare quotes and choose options that fit your exact budget.',
-                },
-                {
-                  icon: 'calendar_add_on',
-                  title: 'Easy Booking',
-                  text: 'Lock in multiple vendors with a single, simple planning experience.',
-                },
-              ].map((card, idx) => (
-                <div
-                  key={card.title}
-                  className="group relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-sm border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
-                >
-                  <div className="absolute inset-x-0 -top-16 h-28 bg-gradient-to-b from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative p-7 flex flex-col gap-4">
-                    <div className="inline-flex items-center justify-center">
-                      <div className="size-16 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary transition-colors">
-                        <span className="material-symbols-outlined text-3xl group-hover:text-white transition-colors">
-                          {card.icon}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="space-y-2 text-center">
-                      <h4 className="text-lg font-bold text-slate-900">{card.title}</h4>
-                      <p className="text-slate-500 text-sm leading-relaxed">{card.text}</p>
-                    </div>
-                    <div className="mt-2 flex items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary/70">
-                      <span className="material-symbols-outlined text-sm">
-                        {idx === 0 ? 'shield' : idx === 1 ? 'reviews' : idx === 2 ? 'price_check' : 'bolt'}
-                      </span>
-                      <span>Learn more</span>
-                    </div>
+                <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9]">
+                  Your trusted <br />partner for <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-amber-200">
+                    unforgettable <br />events.
+                  </span>
+                </h2>
+                <p className="text-xl text-white/60 max-w-md leading-relaxed">
+                  We've built a platform where quality meets convenience, ensuring every host finds their perfect match.
+                </p>
+                <div className="flex items-center gap-8 pt-4">
+                  <div>
+                    <div className="text-4xl font-black text-primary">10k+</div>
+                    <div className="text-xs font-bold uppercase tracking-widest text-white/40">Verified Vendors</div>
+                  </div>
+                  <div className="w-px h-12 bg-white/10" />
+                  <div>
+                    <div className="text-4xl font-black text-primary">50k+</div>
+                    <div className="text-xs font-bold uppercase tracking-widest text-white/40">Happy Hosts</div>
                   </div>
                 </div>
-              ))}
+              </ScrollReveal>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  { icon: ShieldCheck, title: 'Verified', desc: 'Identity-checked pros.' },
+                  { icon: Star, title: 'Rated', desc: 'Transparent reviews.' },
+                  { icon: CreditCard, title: 'Quotes', desc: 'Instant price comparison.' },
+                  { icon: CalendarPlus, title: 'Booking', desc: 'Seamless experience.' },
+                ].map((item, idx) => (
+                  <ScrollReveal key={item.title} delay={idx * 100} className="p-8 rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-primary hover:text-background-dark transition-all group cursor-default">
+                    <item.icon className="size-10 text-primary group-hover:text-background-dark mb-6 transition-colors" />
+                    <h4 className="text-xl font-bold mb-2">{item.title}</h4>
+                    <p className="text-sm text-white/40 group-hover:text-background-dark/60 transition-colors leading-relaxed">{item.desc}</p>
+                  </ScrollReveal>
+                ))}
+              </div>
             </div>
           </div>
-        </ScrollReveal>
+        </section>
 
         {/* Featured Vendors */}
-        <ScrollReveal className="py-12 bg-white" delay={60}>
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h3 className="text-2xl font-bold tracking-tight">Featured Vendors</h3>
-                <p className="text-slate-500 text-sm mt-1">Top-rated professionals for your big day</p>
-              </div>
-              <div className="flex gap-2">
-                <button className="size-10 rounded-full border border-primary/20 flex items-center justify-center hover:bg-primary/5 transition-colors">
-                  <span className="material-symbols-outlined">chevron_left</span>
-                </button>
-                <button className="size-10 rounded-full border border-primary/20 flex items-center justify-center hover:bg-primary/5 transition-colors">
-                  <span className="material-symbols-outlined">chevron_right</span>
-                </button>
-              </div>
+        <section className="py-32 max-w-7xl mx-auto px-6">
+          <ScrollReveal className="flex items-center justify-between mb-16">
+            <div className="space-y-2">
+              <h3 className="text-3xl font-black tracking-tight">Featured Professionals</h3>
+              <p className="text-slate-500 font-medium">Handpicked top-rated vendors for your big day</p>
             </div>
-
-            <div className="flex gap-6 overflow-x-auto pb-6">
-              {/* Card 1 */}
-              <div className="min-w-[300px] flex-shrink-0 bg-white rounded-2xl overflow-hidden border border-primary/5 shadow-md hover:shadow-xl transition-all group">
-                <div className="h-48 bg-slate-200 relative overflow-hidden">
-                  <img
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-dvfAwXblfm015_M3Kxw1TEwhktXOV0he7gOGQe8D4NExBgRRJijNxnIykS_fB73QXo5xbosxVRL3Xk4E67eMdWbqDSXJxQupiv0t3_zaazq1kKBPBz4H9RSRmHpiTy9dQ6YVklwLytr03oB6m0h-UdmWVzmy0OnzgP3ZnFeEa0PqC7PgBHgiTH4-9dzFY6XwMnGWrIjUJdH-jAP_4i_mHDjcRwPLl_E69kuP2PAWT1ekAHsQYCdSLjJj-FkdVAzZvKMJk4XsAmc"
-                    alt="Gourmet catering food display at a party"
-                  />
-                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-primary">
-                    Catering
-                  </div>
-                </div>
-                <div className="p-5">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-bold text-lg">Elite Gourmet Catering</h4>
-                    <div className="flex items-center gap-1 text-yellow-500">
-                      <span className="material-symbols-outlined text-sm">star</span>
-                      <span className="text-xs font-bold text-slate-700">4.9</span>
-                    </div>
-                  </div>
-                  <p className="text-slate-500 text-sm mb-4 line-clamp-2">
-                    Exquisite farm-to-table wedding menus tailored for your guest list.
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-primary font-bold">$$$</span>
-                    <button className="text-sm font-bold border-b-2 border-primary/40 hover:border-primary transition-all">
-                      View Menu
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 2 */}
-              <div className="min-w-[300px] flex-shrink-0 bg-white rounded-2xl overflow-hidden border border-primary/5 shadow-md hover:shadow-xl transition-all group">
-                <div className="h-48 bg-slate-200 relative overflow-hidden">
-                  <img
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDuBwYZ25GjD3m0ZZ6Ix8VbQcjUmfAybdYrJlykIiwrYKPiZ145kWWxZS8FvjU9W4JxVw-TA--JKZIe9DpBLlWltFyD5GSTma1r2y9xt9Qw8d6M7MggKnNFWo_7tLDQiF7ED_aIdpUrbd0ZFzyoimV382oGAgkknTwTqMZ40GLKE7YGE7v1fliLwwNzQOfHNKAkTOpIET1whFj32uI20o3GW4oefxuyJvs7IaBjnz1N1C0upkdJf71B5KfS-WUvcnDEuODqIGx0Ro"
-                    alt="Wedding photographer capturing a moment"
-                  />
-                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-primary">
-                    Photography
-                  </div>
-                </div>
-                <div className="p-5">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-bold text-lg">Golden Hour Studios</h4>
-                    <div className="flex items-center gap-1 text-yellow-500">
-                      <span className="material-symbols-outlined text-sm">star</span>
-                      <span className="text-xs font-bold text-slate-700">5.0</span>
-                    </div>
-                  </div>
-                  <p className="text-slate-500 text-sm mb-4 line-clamp-2">
-                    Capturing timeless memories through cinematic storytelling.
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-primary font-bold">$$</span>
-                    <button className="text-sm font-bold border-b-2 border-primary/40 hover:border-primary transition-all">
-                      View Gallery
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 3 */}
-              <div className="min-w-[300px] flex-shrink-0 bg-white rounded-2xl overflow-hidden border border-primary/5 shadow-md hover:shadow-xl transition-all group">
-                <div className="h-48 bg-slate-200 relative overflow-hidden">
-                  <img
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuADmojF45U7bCv4rgnccONzjvMP2PlPApkp7xo--jNJp8pheZSmYX3n_md6-De3v4kVBk4z1pCVELHb3BkeJMqtFKpOHU-Fvxa_28ZMp4QjMdauWNBeGtmq_7xHMFQslUHa-xr_lgYoDx1-R3dYQEPwpFgzwqw2QBQqQnXROlh9-HQCbv-D3zafppFMpoTe93jOzNR7bxQIy4HiVccJs9dchq4jhDhUBiuRr-WhcZtcHZUyFFjASiGiJJ3yC_SO3K2TMriWH8pemeo"
-                    alt="Professional DJ at an event booth"
-                  />
-                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-primary">
-                    Music
-                  </div>
-                </div>
-                <div className="p-5">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-bold text-lg">Rhythm &amp; Vibe Entertainment</h4>
-                    <div className="flex items-center gap-1 text-yellow-500">
-                      <span className="material-symbols-outlined text-sm">star</span>
-                      <span className="text-xs font-bold text-slate-700">4.8</span>
-                    </div>
-                  </div>
-                  <p className="text-slate-500 text-sm mb-4 line-clamp-2">
-                    Premium sound systems and DJs that keep the dance floor packed.
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-primary font-bold">$$</span>
-                    <button className="text-sm font-bold border-b-2 border-primary/40 hover:border-primary transition-all">
-                      Check Dates
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 4 */}
-              <div className="min-w-[300px] flex-shrink-0 bg-white rounded-2xl overflow-hidden border border-primary/5 shadow-md hover:shadow-xl transition-all group">
-                <div className="h-48 bg-slate-200 relative overflow-hidden">
-                  <img
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeNaF86WRiXbSR6622CLTrKVlZM6pn0-BFMXVAaAgI6kEhnBeXppN08yGFu5rTZxoZxd4_LIayeVBDJh6yYWWOt_bNGdPzF_fET1Ocfr4kA2wXktiqMeryBR6WHuK12clOR_VJfqnLKVEycPGtvyvfwe_2FA8IazSsB9ofGB6-wnEu0Pu4An4DUL-myJ4NjTaGW-De8BWgLeI1iX4H9gEVzIH0B-CajSeHj9-ZNUtjezMbTs8UGCDugDcIT0DKF5dLceJXZ-BXqJw"
-                    alt="Elegant floral wedding table decor"
-                  />
-                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-primary">
-                    Decor
-                  </div>
-                </div>
-                <div className="p-5">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-bold text-lg">Floral Fantasies Design</h4>
-                    <div className="flex items-center gap-1 text-yellow-500">
-                      <span className="material-symbols-outlined text-sm">star</span>
-                      <span className="text-xs font-bold text-slate-700">4.7</span>
-                    </div>
-                  </div>
-                  <p className="text-slate-500 text-sm mb-4 line-clamp-2">
-                    Bespoke floral arrangements and venue transformations for any theme.
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-primary font-bold">$$$</span>
-                    <button className="text-sm font-bold border-b-2 border-primary/40 hover:border-primary transition-all">
-                      See Designs
-                    </button>
-                  </div>
-                </div>
-              </div>
+            <div className="flex gap-3">
+              <button className="size-12 rounded-full border-2 border-slate-100 flex items-center justify-center hover:bg-slate-50 transition-all">
+                <ChevronLeft className="size-6" />
+              </button>
+              <button className="size-12 rounded-full border-2 border-slate-100 flex items-center justify-center hover:bg-slate-50 transition-all">
+                <ChevronRight className="size-6" />
+              </button>
             </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { 
+                name: 'Elite Gourmet Catering', 
+                cat: 'Catering', 
+                rating: '4.9', 
+                price: '10,000 Rs',
+                img: 'https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=2070&auto=format&fit=crop'
+              },
+              { 
+                name: 'Golden Hour Studios', 
+                cat: 'Photography', 
+                rating: '5.0', 
+                price: '57,000 Rs',
+                img: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=2070&auto=format&fit=crop'
+              },
+              { 
+                name: 'Rhythm & Vibe Ent.', 
+                cat: 'Music', 
+                rating: '4.8', 
+                price: '6,000 Rs',
+                img: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=2070&auto=format&fit=crop'
+              },
+              { 
+                name: 'Floral Fantasies', 
+                cat: 'Decor', 
+                rating: '4.7', 
+                price: '8,500 Rs',
+                img: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=2070&auto=format&fit=crop'
+              },
+            ].map((vendor, idx) => (
+              <ScrollReveal key={vendor.name} delay={idx * 100} className="group bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl transition-all">
+                <div className="h-64 relative overflow-hidden">
+                  <img
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    src={vendor.img}
+                    alt={vendor.name}
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-black text-primary uppercase tracking-wider">
+                    {vendor.cat}
+                  </div>
+                </div>
+                <div className="p-8">
+                  <div className="flex justify-between items-start mb-4">
+                    <h4 className="font-black text-xl text-slate-900 leading-tight">{vendor.name}</h4>
+                    <div className="flex items-center gap-1 text-amber-500">
+                      <Star className="size-4 fill-current" />
+                      <span className="text-sm font-black text-slate-700">{vendor.rating}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                    <div>
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Starting from</span>
+                      <span className="text-primary text-xl font-black">{vendor.price}</span>
+                    </div>
+                    <button className="size-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-white transition-all">
+                      <ArrowRight className="size-6" />
+                    </button>
+                  </div>
+                </div>
+              </ScrollReveal>
+            ))}
           </div>
-        </ScrollReveal>
+        </section>
 
-        {/* Partner CTA — full-bleed band, no card */}
-        <ScrollReveal className="w-full" delay={80}>
-          <section className="relative overflow-hidden bg-gradient-to-r from-primary via-purple-700 to-background-dark py-16 md:py-20">
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.04)_50%,transparent_100%)]" />
-            <div className="relative z-10 max-w-7xl mx-auto px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-10 md:gap-12">
-              <div className="flex-1 max-w-2xl">
-                <p className="text-white/70 text-[11px] font-semibold uppercase tracking-[0.3em] mb-3">
-                  Partner with us
-                </p>
-                <h3 className="text-white text-3xl md:text-4xl lg:text-5xl font-black leading-tight tracking-tight">
+        {/* Partner CTA */}
+        <section className="px-6 py-20">
+          <div className="max-w-7xl mx-auto rounded-[3rem] overflow-hidden bg-background-dark relative border border-white/10">
+            <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_0%_50%,rgba(251,191,36,0.4),transparent_50%)]" />
+            <div className="relative z-10 px-10 py-20 md:px-20 flex flex-col md:flex-row items-center justify-between gap-12">
+              <div className="max-w-2xl space-y-6 text-center md:text-left">
+                <span className="text-primary text-xs font-bold uppercase tracking-[0.3em]">Partner with us</span>
+                <h2 className="text-4xl md:text-6xl font-black text-white leading-tight">
                   Grow Your Business with EventBazaar
-                </h3>
-                <p className="mt-4 text-white/80 text-base md:text-lg max-w-xl">
-                  Reach thousands of customers planning their next event. List your services, manage
-                  bookings, and grow your reputation.
+                </h2>
+                <p className="text-white/70 text-lg font-medium">
+                  Reach thousands of customers planning their next event. List your services, manage bookings, and grow your reputation.
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4 shrink-0">
+              <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0">
                 <Link
                   to="/register"
-                  className="inline-flex items-center gap-2 bg-white text-primary font-bold px-6 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
+                  className="inline-flex items-center gap-3 bg-primary text-background-dark font-black px-10 py-5 rounded-2xl shadow-2xl hover:scale-105 transition-all"
                 >
-                  <span className="material-symbols-outlined text-xl">storefront</span>
+                  <Store className="size-6" />
                   List Your Service
                 </Link>
                 <Link
-                  to="/contact-us"
-                  className="inline-flex items-center gap-2 border-2 border-white/40 text-white font-bold px-6 py-3.5 rounded-full hover:bg-white/10 transition-colors"
+                  to="/contact"
+                  className="inline-flex items-center gap-3 border-2 border-white/20 text-white font-bold px-8 py-5 rounded-2xl hover:bg-white/10 transition-all"
                 >
-                  <span className="material-symbols-outlined text-xl">help</span>
+                  <HelpCircle className="size-6" />
                   How it Works
                 </Link>
               </div>
             </div>
-          </section>
-        </ScrollReveal>
+          </div>
+        </section>
 
-        {/* Final CTA */}
-        <ScrollReveal className="py-20" delay={80}>
-          <div className="max-w-6xl mx-auto px-4">
-            <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-r from-background-dark via-slate-900 to-primary shadow-2xl border border-primary/20">
-              {/* subtle texture */}
-              <div className="absolute inset-0 opacity-30 mix-blend-soft-light bg-[radial-gradient(circle_at_0_0,rgba(248,250,252,0.4),transparent_55%),radial-gradient(circle_at_100%_0,rgba(244,114,182,0.35),transparent_55%),radial-gradient(circle_at_100%_100%,rgba(129,140,248,0.3),transparent_55%)]" />
-
-              <div className="relative z-10 flex flex-col md:flex-row items-stretch gap-10 px-8 py-10 md:px-12 md:py-12 lg:px-16 lg:py-14">
-                <div className="flex-1 flex flex-col justify-center text-center md:text-left gap-6">
-                  <div className="inline-flex items-center justify-center md:justify-start gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-[11px] font-semibold uppercase tracking-[0.26em] text-white/80">
-                    <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Ready to Plan Your Event?
-                  </div>
-                  <div className="space-y-4">
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-black leading-tight text-white">
-                      Turn your date into
-                      <span className="block text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 via-purple-300 to-sky-200">
-                        an unforgettable celebration.
-                      </span>
-                    </h2>
-                    <p className="text-white/80 text-base md:text-lg max-w-xl mx-auto md:mx-0">
-                      Join thousands of happy hosts who trusted EventBazaar for their weddings,
-                      birthdays, and corporate events. We’ll help you find, compare and book the right
-                      vendors in minutes.
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
-                    <Link
-                      to="/services"
-                      className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white text-primary px-10 py-3.5 text-sm md:text-base font-extrabold shadow-xl shadow-primary/40 hover:shadow-primary/60 hover:translate-y-[-1px] transition-all"
-                    >
-                      <span>Get Started Now</span>
-                      <span className="material-symbols-outlined text-base md:text-lg">arrow_forward</span>
-                    </Link>
-                    <button
-                      type="button"
-                      className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/5 px-6 py-3 text-sm md:text-base font-semibold text-white hover:bg-white/10 transition-colors"
-                    >
-                      <span className="material-symbols-outlined text-base md:text-lg">event</span>
-                      Explore sample event plans
-                    </button>
-                  </div>
-
-                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-2 text-[11px] md:text-xs text-white/70 pt-2">
-                    <div className="inline-flex items-center gap-2">
-                      <span className="material-symbols-outlined text-sm text-emerald-400">
-                        verified
-                      </span>
-                      <span>No platform fee to get started</span>
+        {/* Footer CTA */}
+        <section className="py-32 px-6">
+          <ScrollReveal className="max-w-5xl mx-auto text-center space-y-10">
+            <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 leading-[0.9]">
+              Ready to turn your date into <br />
+              <span className="italic font-serif font-normal text-primary">an unforgettable celebration?</span>
+            </h2>
+            <p className="text-xl text-slate-500 max-w-2xl mx-auto font-medium">
+              Join thousands of happy hosts who trusted EventBazaar for their weddings, birthdays, and corporate events.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
+              <Link
+                to="/services"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 rounded-2xl bg-primary text-white px-12 py-6 text-xl font-black shadow-2xl shadow-primary/40 hover:shadow-primary/60 hover:-translate-y-1 transition-all"
+              >
+                Get Started Now
+                <ArrowRight className="size-6" />
+              </Link>
+              <div className="flex items-center gap-4 text-slate-400">
+                <div className="flex -space-x-3">
+                  {[1,2,3,4].map(i => (
+                    <div key={i} className="size-10 rounded-full border-2 border-white bg-slate-200 overflow-hidden">
+                      <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" />
                     </div>
-                    <div className="w-px h-4 bg-white/20 hidden sm:block" />
-                    <div className="inline-flex items-center gap-2">
-                      <span className="material-symbols-outlined text-sm text-amber-300">
-                        grade
-                      </span>
-                      <span>4.9 / 5 average customer rating</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-
-                <div className="flex-1 max-w-sm w-full mx-auto md:mx-0">
-                  <div className="h-full rounded-3xl bg-white/5 border border-white/20 px-6 py-6 md:px-7 md:py-7 flex flex-col justify-between gap-6">
-                    <div className="space-y-4">
-                      <h3 className="text-sm font-semibold tracking-[0.26em] uppercase text-white/70">
-                        Why hosts choose us
-                      </h3>
-                      <ul className="space-y-3 text-sm text-white/80">
-                        <li className="flex items-start gap-3">
-                          <span className="mt-0.5 material-symbols-outlined text-emerald-400 text-base">
-                            check_circle
-                          </span>
-                          <span>Verified, top-rated vendors across catering, decor, music and more.</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <span className="mt-0.5 material-symbols-outlined text-emerald-400 text-base">
-                            check_circle
-                          </span>
-                          <span>Transparent pricing and options that match your guest count and budget.</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <span className="mt-0.5 material-symbols-outlined text-emerald-400 text-base">
-                            check_circle
-                          </span>
-                          <span>One place to shortlist, compare and manage all your bookings.</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    <div className="flex items-center justify-between border-t border-white/15 pt-4 text-[11px] md:text-xs text-white/60">
-                      <div>
-                        <div className="font-semibold text-white/80">10k+ events planned</div>
-                        <div>from intimate gatherings to grand celebrations</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-semibold text-white/80">24x7 support</div>
-                        <div>for last-minute changes</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <span className="text-sm font-bold">Trusted by 10k+ hosts</span>
               </div>
             </div>
-          </div>
-        </ScrollReveal>
+          </ScrollReveal>
+        </section>
       </main>
 
-      {/* Bottom mobile nav (only on small screens) */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-primary/10 z-50 md:hidden">
-        <div className="flex justify-around items-center h-16 px-4">
+      {/* Bottom mobile nav */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-slate-100 z-50 md:hidden">
+        <div className="flex justify-around items-center h-20 px-4">
           <Link to="/" className="flex flex-col items-center gap-1 text-primary">
-            <span className="material-symbols-outlined text-2xl">home</span>
-            <span className="text-[10px] font-bold">Home</span>
+            <HomeIcon className="size-6" />
+            <span className="text-[10px] font-black uppercase tracking-wider">Home</span>
           </Link>
           <Link to="/services" className="flex flex-col items-center gap-1 text-slate-400">
-            <span className="material-symbols-outlined text-2xl">search</span>
-            <span className="text-[10px] font-bold">Search</span>
+            <Search className="size-6" />
+            <span className="text-[10px] font-black uppercase tracking-wider">Search</span>
           </Link>
           <Link to="/my-bookings" className="flex flex-col items-center gap-1 text-slate-400">
-            <span className="material-symbols-outlined text-2xl">calendar_month</span>
-            <span className="text-[10px] font-bold">Bookings</span>
+            <Calendar className="size-6" />
+            <span className="text-[10px] font-black uppercase tracking-wider">Bookings</span>
           </Link>
-          <a className="flex flex-col items-center gap-1 text-slate-400" href="#">
-            <span className="material-symbols-outlined text-2xl">track_changes</span>
-            <span className="text-[10px] font-bold">Track</span>
-          </a>
-          <Link to="/login" className="flex flex-col items-center gap-1 text-slate-400">
-            <span className="material-symbols-outlined text-2xl">person</span>
-            <span className="text-[10px] font-bold">Profile</span>
+          <Link to="/profile" className="flex flex-col items-center gap-1 text-slate-400">
+            <User className="size-6" />
+            <span className="text-[10px] font-black uppercase tracking-wider">Profile</span>
           </Link>
         </div>
       </nav>
-    </>
+    </div>
   );
 }

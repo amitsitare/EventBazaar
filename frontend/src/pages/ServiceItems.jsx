@@ -178,14 +178,17 @@ export default function ServiceItems() {
   };
 
   return (
-    <div className="bg-background-light">
-      <div className="max-w-5xl mx-auto px-4 py-3 md:py-4">
-        <div className="mb-3">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100/60">
+      <div className="max-w-6xl mx-auto px-4 py-4 md:py-6">
+        <div className="mb-4 rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur-sm shadow-sm p-4 md:p-5 [animation:fadeIn_0.5s_ease-out]">
           <div className="min-w-0">
-            <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900 truncate">
+            <p className="mb-1 inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-indigo-700">
+              Service Inventory
+            </p>
+            <h2 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 truncate">
               {service?.name || `Service #${serviceId}`}
             </h2>
-            <p className="text-sm text-slate-500 mt-1 mb-0">
+            <p className="text-sm md:text-base text-slate-600 mt-2 mb-0">
               Add the things you provide in this service (e.g., bucket, bhagona, spoon).
             </p>
           </div>
@@ -206,9 +209,9 @@ export default function ServiceItems() {
           </div>
         )}
 
-        <div className="rounded-3xl bg-white border border-slate-100 shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-slate-100">
-            <h3 className="text-base font-extrabold tracking-tight text-slate-900">Add item</h3>
+        <div className="rounded-3xl bg-white border border-slate-200/80 shadow-lg shadow-slate-200/50 overflow-hidden [animation:fadeInUp_0.55s_ease-out]">
+          <div className="px-4 py-3 border-b border-slate-100 bg-gradient-to-r from-indigo-50/80 via-white to-purple-50/80">
+            <h3 className="text-base font-extrabold tracking-tight text-slate-900">Add New Item</h3>
           </div>
           <div className="p-4">
             <form onSubmit={add} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
@@ -268,7 +271,7 @@ export default function ServiceItems() {
                 <button
                   type="submit"
                   disabled={!canSubmit || loading || uploading}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary text-white px-5 py-2.5 text-sm font-extrabold shadow-md shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:hover:translate-y-0"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary text-white px-5 py-2.5 text-sm font-extrabold shadow-md shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:hover:translate-y-0"
                 >
                   {loading || uploading ? 'Saving...' : 'Add item'}
                 </button>
@@ -287,11 +290,11 @@ export default function ServiceItems() {
 
         {editingItem && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-3 sm:px-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 backdrop-blur-sm px-3 sm:px-4 [animation:fadeIn_0.25s_ease-out]"
             onClick={cancelEdit}
           >
             <div
-              className="w-full max-w-md rounded-3xl bg-white border border-slate-100 shadow-xl"
+              className="w-full max-w-md rounded-3xl bg-white border border-slate-100 shadow-xl [animation:zoomIn_0.25s_ease-out]"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="px-5 py-4 flex items-center justify-between border-b border-slate-100">
@@ -377,36 +380,37 @@ export default function ServiceItems() {
           </div>
         )}
 
-        <div className="mt-4 rounded-3xl bg-white border border-slate-100 shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+        <div className="mt-4 rounded-3xl bg-white border border-slate-200/80 shadow-lg shadow-slate-200/50 overflow-hidden [animation:fadeInUp_0.7s_ease-out]">
+          <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between">
             <h3 className="text-base font-extrabold tracking-tight text-slate-900">Items</h3>
-            <span className="text-xs font-extrabold text-slate-700 bg-slate-100 border border-slate-200 rounded-full px-3 py-1">
+            <span className="text-xs font-extrabold text-slate-700 bg-white border border-slate-200 rounded-full px-3 py-1 shadow-sm">
               {items.length}
             </span>
           </div>
           <div className="p-4">
             {items.length === 0 ? (
-              <div className="text-center text-sm text-slate-500 py-8">
-                No items added yet.
+              <div className="text-center text-sm text-slate-500 py-10 rounded-2xl border border-dashed border-slate-200 bg-slate-50/50">
+                No items added yet. Start by creating your first item above.
               </div>
             ) : (
-              <div className="space-y-2">
-                {items.map((it) => (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                {items.map((it, idx) => (
                   <div
                     key={it.id}
                     role="button"
                     tabIndex={0}
-                    className="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-white p-2.5 hover:bg-slate-50/40 transition-colors cursor-pointer"
+                    className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50/70 p-3 hover:-translate-y-0.5 hover:shadow-md hover:border-indigo-200 transition-all duration-200 cursor-pointer [animation:fadeInUp_0.35s_ease-out]"
+                    style={{ animationDelay: `${Math.min(idx * 50, 300)}ms`, animationFillMode: 'both' }}
                     onClick={() => openEdit(it)}
                     onKeyDown={(e) => e.key === 'Enter' && openEdit(it)}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="size-10 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+                      <div className="size-12 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 shadow-sm">
                         {it.photo_url ? (
                           <img
                             src={it.photo_url}
                             alt={it.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             onError={(e) => {
                               e.target.style.display = 'none';
                             }}
@@ -414,7 +418,9 @@ export default function ServiceItems() {
                         ) : null}
                       </div>
                       <div className="min-w-0">
-                        <p className="font-extrabold text-slate-900 truncate mb-0">{it.name}</p>
+                        <p className="font-extrabold text-slate-900 truncate mb-0 group-hover:text-indigo-700 transition-colors">
+                          {it.name}
+                        </p>
                         <p className="text-xs text-slate-500 truncate mb-0">
                           Qty: {it.quantity || '—'}
                           {typeof it.amount === 'number' ? ` • Price per item: ₹${it.amount}` : ''}
@@ -423,7 +429,7 @@ export default function ServiceItems() {
                     </div>
                     <button
                       type="button"
-                      className="inline-flex items-center justify-center rounded-full border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-bold text-rose-700 hover:bg-rose-100 transition-colors"
+                      className="inline-flex items-center justify-center rounded-full border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-bold text-rose-700 hover:bg-rose-100 hover:scale-105 transition-all"
                       onClick={(e) => remove(it.id, e)}
                       disabled={loading}
                     >
@@ -436,6 +442,21 @@ export default function ServiceItems() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes zoomIn {
+          from { opacity: 0; transform: scale(0.96); }
+          to { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
     </div>
   );
 }

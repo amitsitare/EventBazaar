@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
+import TorchEffect from './components/TorchEffect.jsx';
 import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
@@ -24,7 +25,8 @@ export default function App() {
   return (
     <div className="d-flex flex-column min-vh-100">
       <Navbar />
-      <main className="flex-fill container py-4">
+      <TorchEffect />
+      <main className="flex-fill container-fluid px-0 py-4">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

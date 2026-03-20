@@ -158,11 +158,6 @@ async def me(payload=Depends(get_current_user), conn=Depends(get_db_conn)):
             row = await cur.fetchone()
             if not row:
                 raise HTTPException(status_code=404, detail="User not found")
-            if row[7] is None or row[8] is None:
-                raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail="Location not set for this user. Please allow location permission and update your profile.",
-                )
             return UserPublic(**{
                 "id": row[0],
                 "name": row[1],

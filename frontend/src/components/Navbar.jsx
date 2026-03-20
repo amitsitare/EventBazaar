@@ -17,12 +17,12 @@ export default function Navbar() {
     `${linkBase} ${isActive ? 'bg-primary/10 text-primary shadow-sm' : ''}`;
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-primary/10">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Brand */}
         <NavLink
           to="/"
-          className="flex items-center gap-3 rounded-2xl bg-primary/5 px-3 py-1.5 hover:bg-primary/10 transition-colors"
+          className="flex items-center gap-3 rounded-2xl bg-primary/5 px-3 py-1.5 hover:bg-primary/10 transition-colors no-underline"
         >
           <img
             src="/logo.png"
@@ -36,18 +36,15 @@ export default function Navbar() {
 
         {/* Center nav links */}
         <nav className="hidden md:flex items-center gap-2 rounded-full bg-white/60 px-2 py-1 shadow-sm">
+          <NavLink to="/" className={navLinkClass}>
+            Home
+          </NavLink>
           <NavLink to="/services" className={navLinkClass}>
             Find Vendors
           </NavLink>
-          <a href="#" className={linkBase}>
-            Inspiration
-          </a>
-          <a href="#" className={linkBase}>
-            Pricing
-          </a>
-          <a href="#" className={linkBase}>
-            Track
-          </a>
+          <NavLink to="/services" className={navLinkClass}>
+            Services
+          </NavLink>
         </nav>
 
         {/* Right actions */}

@@ -51,9 +51,11 @@ def create_tables(conn):
             email TEXT UNIQUE NOT NULL,
             mobile TEXT NOT NULL,
             whatsapp_number TEXT,
-            address TEXT NOT NULL,
+            address TEXT,
             role TEXT NOT NULL CHECK (role IN ('provider','customer')),
             password_hash TEXT NOT NULL,
+            latitude DOUBLE PRECISION,
+            longitude DOUBLE PRECISION,
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         );
     """)
@@ -101,6 +103,15 @@ def create_tables(conn):
     try:
         conn.execute("""
             ALTER TABLE users ADD COLUMN IF NOT EXISTS whatsapp_number TEXT;
+        """)
+        conn.execute("""
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION;
+        """)
+        conn.execute("""
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION;
+        """)
+        conn.execute("""
+            ALTER TABLE users ALTER COLUMN address DROP NOT NULL;
         """)
         print("Added whatsapp_number column to users table")
     except Exception as e:

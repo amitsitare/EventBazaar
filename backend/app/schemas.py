@@ -11,10 +11,10 @@ class UserBase(BaseModel):
     email: EmailStr
     mobile: constr(pattern=r"^\d{10}$")
     whatsapp_number: Optional[str] = None
-    address: str
+    address: Optional[str] = None
     role: UserRole
-    latitude: float
-    longitude: float
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
 
 class UserCreate(UserBase):
@@ -32,10 +32,10 @@ class UserPublic(BaseModel):
     email: EmailStr
     mobile: str
     whatsapp_number: Optional[str] = None
-    address: str
+    address: Optional[str] = None
     role: UserRole
-    latitude: float
-    longitude: float
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
 
 class TokenResponse(BaseModel):

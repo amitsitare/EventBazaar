@@ -15,12 +15,14 @@
         theme: {
           extend: {
             colors: {
-              primary: '#840bda',
-              'background-light': '#f7f5f8',
-              'background-dark': '#1b1022',
+              primary: '#fbbf24',
+              'background-light': '#fcfcfc',
+              'background-dark': '#0a0a0a',
             },
             fontFamily: {
-              display: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+              display: ['Inter', 'system-ui', 'sans-serif'],
+              sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
             },
             borderRadius: {
               DEFAULT: '0.25rem',
@@ -35,7 +37,7 @@
 
     <!-- Google Fonts for new visual + existing Poppins if needed elsewhere -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
@@ -51,7 +53,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
   </head>
-  <body class="bg-background-light font-display text-slate-900">
+  <body class="bg-background-light font-sans antialiased text-slate-900 overflow-x-hidden">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

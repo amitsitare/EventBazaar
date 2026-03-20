@@ -1,9 +1,20 @@
 /* Custom styles for EventBazaar */
 
+/* Keep these in sync with Tailwind `primary` in `frontend/index.html` */
+:root {
+  --primary: #fbbf24;
+  --primary-rgb: 251, 191, 36;
+  --primary-light: #fde68a;
+  --primary-deep: #f59e0b;
+}
+
 /* Global Styles */
-body { 
-  background: #fafafa; 
-  font-family: 'Poppins', sans-serif;
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  overflow-x: hidden;
 }
 
 /* Hero Section */
@@ -19,7 +30,11 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(132, 11, 218, 0.4), rgba(132, 11, 218, 0.7));
+  background: linear-gradient(
+    135deg,
+    rgba(var(--primary-rgb), 0.28),
+    rgba(var(--primary-rgb), 0.62)
+  );
   z-index: 1;
 }
 
@@ -72,7 +87,7 @@ footer a {
 }
 
 footer a:hover {
-  color: #fff !important;
+  color: #fbbf24 !important;
 }
 
 /* Custom Animations */
@@ -94,8 +109,13 @@ footer a:hover {
 /* Navbar Styles */
 /* Navbar container */
 .navbar-custom {
-  background: linear-gradient(90deg, #2b0a45 0%, #3b0f5f 45%, #840bda 100%);
-  box-shadow: 0 2px 18px rgba(15,23,42,0.65);
+  background: linear-gradient(
+    90deg,
+    #0a0a0a 0%,
+    #111827 45%,
+    rgba(var(--primary-rgb), 0.95) 100%
+  );
+  box-shadow: 0 2px 18px rgba(15, 23, 42, 0.55);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(248,250,252,0.08);
 }
@@ -115,7 +135,7 @@ footer a:hover {
 
 /* underline accent */
 .navbar-custom .nav-link-custom::after {
-  background: linear-gradient(90deg, #e879f9, #c4b5fd);
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
 }
 
 /* ensure icons inside links inherit link color */
@@ -164,7 +184,7 @@ footer a:hover {
 }
 
 .navbar-toggler-custom:focus {
-  box-shadow: 0 0 0 0.18rem rgba(132, 11, 218, 0.35);
+  box-shadow: 0 0 0 0.18rem rgba(var(--primary-rgb), 0.35);
 }
 
 /* Logo Styles */
@@ -184,7 +204,7 @@ footer a:hover {
 
 .brand-text {
   margin-left: 6px;
-  background: linear-gradient(135deg, #e879f9 0%, #a855f7 45%, #c4b5fd 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, #fde68a 45%, #fff7ed 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -192,10 +212,10 @@ footer a:hover {
 
 /* Primary gradient button used in navbar */
 .btn-gradient-primary {
-  background: linear-gradient(135deg, #581c87 0%, #7c3aed 45%, #c4b5fd 100%);
+  background: linear-gradient(135deg, var(--primary-deep) 0%, var(--primary) 45%, var(--primary-light) 100%);
   color: #f9fafb;
   border: none;
-  box-shadow: 0 12px 30px rgba(132, 11, 218, 0.45);
+  box-shadow: 0 12px 30px rgba(var(--primary-rgb), 0.45);
 }
 
 .btn-gradient-primary:hover {
@@ -205,7 +225,12 @@ footer a:hover {
 
 /* Footer */
 .footer-modern {
-  background: radial-gradient(circle at top, #2b0a45 0%, #2b0a45 50%, #3b0f5f 100%);
+  background: radial-gradient(
+    circle at top,
+    rgba(var(--primary-rgb), 0.18) 0%,
+    #0a0a0a 55%,
+    #0a0a0a 100%
+  );
   border-top: 1px solid rgba(148,163,184,0.4);
 }
 
@@ -264,7 +289,7 @@ footer:hover img {
   justify-content: center;
   flex-direction: column;
   gap: 6px;
-  color: #840bda;
+  color: var(--primary);
   animation: floatY 4.5s ease-in-out infinite;
 }
 
@@ -315,7 +340,7 @@ footer:hover img {
   height: 520px;
   border-radius: 120px 120px 16px 16px; /* arch top */
   border: 8px solid #fff;
-  background: linear-gradient(180deg, rgba(132,11,218,0.12), rgba(132,11,218,0));
+  background: linear-gradient(180deg, rgba(var(--primary-rgb),0.12), rgba(var(--primary-rgb),0));
 }
 
 /* Service chips */
@@ -327,27 +352,43 @@ footer:hover img {
   padding: 10px 14px;
   border-radius: 999px; /* pill */
   background: #ffffff;
-  color: #840bda;
-  border: 1px solid rgba(132,11,218,0.25);
+  color: var(--primary);
+  border: 1px solid rgba(var(--primary-rgb),0.25);
   transition: all .25s ease;
 }
 
 .service-chip:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 22px rgba(0,0,0,.08);
-  border-color: rgba(132,11,218,0.5);
+  border-color: rgba(var(--primary-rgb),0.5);
 }
 
-/* Bootstrap primary overrides to match #840bda theme */
+/* Bootstrap primary overrides to match Tailwind `primary` */
+.text-primary,
+.text-primary:hover,
+.text-primary:focus {
+  /* Bootstrap uses blue for `primary` by default; force it to match our Tailwind primary. */
+  color: #fbbf24 !important;
+}
+
+.bg-primary,
+.bg-primary:hover {
+  background-color: #fbbf24 !important;
+}
+
+.border-primary {
+  border-color: #fbbf24 !important;
+}
+
 .btn-primary,
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active,
 .btn-primary:disabled {
-  background-color: #840bda !important;
-  border-color: #840bda !important;
+  background-color: #fbbf24 !important;
+  border-color: #fbbf24 !important;
   color: #ffffff !important;
-  box-shadow: 0 10px 24px rgba(132, 11, 218, 0.4) !important;
+  box-shadow: 0 10px 24px rgba(251, 191, 36, 0.4) !important;
 }
 
 .btn-primary:hover,
@@ -359,36 +400,27 @@ footer:hover img {
 .btn-outline-primary:hover,
 .btn-outline-primary:focus,
 .btn-outline-primary:active {
-  color: #840bda !important;
-  border-color: #840bda !important;
-  background-color: rgba(132, 11, 218, 0.04) !important;
-  box-shadow: 0 8px 20px rgba(132, 11, 218, 0.25) !important;
+  color: #fbbf24 !important;
+  border-color: #fbbf24 !important;
+  background-color: rgba(251, 191, 36, 0.04) !important;
+  box-shadow: 0 8px 20px rgba(251, 191, 36, 0.25) !important;
 }
 
 .btn-outline-primary:hover,
 .btn-outline-primary:focus {
-  background-color: rgba(132, 11, 218, 0.09) !important;
+  background-color: rgba(251, 191, 36, 0.09) !important;
 }
 
 .badge.bg-primary {
-  background-color: #840bda !important;
+  background-color: #fbbf24 !important;
 }
 
-/* Override Bootstrap primary color utilities to purple */
-.bg-primary {
-  background-color: #840bda !important;
+/* Used by Home hero/trust pill; Tailwind CDN config does not define it */
+.text-primary-foreground {
+  color: #ffffff !important;
 }
 
-.text-primary {
-  color: #840bda !important;
-}
-
-.border-primary,
-.border-primary\/10,
-.border-primary\/20,
-.border-primary\/40 {
-  border-color: #840bda !important;
-}
+/* Tailwind should control bg/text/border primary colors */
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -403,6 +435,34 @@ footer:hover img {
 .hover-lift:hover {
   transform: translateY(-8px);
   box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #fbbf24;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
 }
 
 

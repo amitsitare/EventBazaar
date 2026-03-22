@@ -89,7 +89,10 @@ async def register(user: UserCreate, conn=Depends(get_db_conn)):
             status_code=status.HTTP_400_BAD_REQUEST, 
             detail="Invalid data provided"
         )
-    except Exception as e:
+    except HTTPException:
+        await conn.rollback()
+        raise
+    except Exception:
         await conn.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 

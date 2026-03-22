@@ -20,6 +20,8 @@ import {
   Eye,
   MessageSquare,
   TrendingUp,
+  ChevronDown,
+  CreditCard,
 } from 'lucide-react';
 import { API_BASE, authHeader } from '../auth';
 
@@ -43,6 +45,13 @@ const formatDate = (value) => {
   });
 };
 
+const formatDateTime = (value) => {
+  if (!value) return '-';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return String(value);
+  return d.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+};
+
 const currency = (n) =>
   new Intl.NumberFormat('en-IN', {
     style: 'currency',
@@ -61,14 +70,17 @@ export default function ProviderDashboard() {
   const [loading, setLoading] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [providerPayments, setProviderPayments] = useState([]);
+  const [paymentsOpen, setPaymentsOpen] = useState(false);
 
   const load = async () => {
     setLoading(true);
     setError('');
     try {
-      const [servicesResp, bookingsResp] = await Promise.all([
+      const [servicesResp, bookingsResp, paymentsResp] = await Promise.all([
         axios.get(`${API_BASE}/api/services/my`, { headers: authHeader() }),
         axios.get(`${API_BASE}/api/bookings/my`, { headers: authHeader() }),
+        axios.get(`${API_BASE}/api/payments/provider`, { headers: authHeader() }).catch(() => ({ data: [] })),
       ]);
 
       const bookingsData = Array.isArray(bookingsResp.data) ? bookingsResp.data : [];
@@ -98,7 +110,18 @@ export default function ProviderDashboard() {
         service_id: Number(b.service_id),
         quantity: Number(b.quantity ?? 1) || 1,
         customer_id: Number(b.customer_id ?? 0),
+        paid_amount: b.paid_amount != null && b.paid_amount !== '' ? Number(b.paid_amount) : null,
       }));
+
+      const payRows = Array.isArray(paymentsResp.data) ? paymentsResp.data : [];
+      setProviderPayments(
+        payRows.map((p) => ({
+          ...p,
+          id: Number(p.id),
+          amount: Number(p.amount ?? 0),
+          booking_id: p.booking_id != null ? Number(p.booking_id) : null,
+        }))
+      );
 
       setServices(normalizedServices);
       setBookings(normalizedBookings);
@@ -119,15 +142,19 @@ export default function ProviderDashboard() {
     return map;
   }, [services]);
 
+  const confirmedBookingAmount = (b) => {
+    const paid = Number(b.paid_amount);
+    if (Number.isFinite(paid) && paid > 0) return paid;
+    const svc = serviceById.get(Number(b.service_id));
+    return Number(svc?.price ?? 0) * Number(b.quantity ?? 1);
+  };
+
   const stats = useMemo(() => {
     const totalBookings = bookings.length;
     const activeBookings = bookings.filter((b) => b.status === 'pending' || b.status === 'confirmed').length;
     const revenue = bookings
       .filter((b) => b.status === 'confirmed')
-      .reduce((sum, b) => {
-        const svc = serviceById.get(Number(b.service_id));
-        return sum + Number(svc?.price ?? 0) * Number(b.quantity ?? 1);
-      }, 0);
+      .reduce((sum, b) => sum + confirmedBookingAmount(b), 0);
     return {
       totalBookings,
       activeBookings,
@@ -135,6 +162,12 @@ export default function ProviderDashboard() {
       totalViews: services.reduce((sum, s) => sum + Number(s.views || 0), 0),
     };
   }, [bookings, services, serviceById]);
+
+  const verifiedPaymentsTotal = useMemo(
+    () =>
+      providerPayments.filter((p) => p.signature_status === 'verified').reduce((sum, p) => sum + Number(p.amount || 0), 0),
+    [providerPayments]
+  );
 
   const pieData = useMemo(
     () => [
@@ -295,7 +328,10 @@ export default function ProviderDashboard() {
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-3">
           <div className="bg-white rounded-2xl border border-slate-100 p-4 lg:col-span-2">
             <div className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Revenue</div>
-            <div className="text-2xl font-black mb-3">{currency(stats.revenue)}</div>
+            <div className="text-2xl font-black mb-1">{currency(stats.revenue)}</div>
+            <p className="text-[11px] text-slate-500 mb-3">
+              From confirmed bookings (uses amount actually paid when recorded; otherwise service price × quantity).
+            </p>
             <div className="h-40 rounded-xl bg-gradient-to-br from-amber-50 to-white border border-amber-100 p-3 flex flex-col justify-end">
               <div className="h-16 flex items-end gap-1.5">
                 {[25, 35, 30, 55, 48, 70].map((h, i) => (
@@ -351,6 +387,97 @@ export default function ProviderDashboard() {
               <div className="text-xl font-black mt-1">{stats.totalBookings}</div>
             </div>
           </div>
+        </section>
+
+        <section className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setPaymentsOpen((o) => !o)}
+            className="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-slate-50/80 transition-colors"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="size-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+                <CreditCard className="size-5 text-emerald-700" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-sm font-black text-slate-900">Payments received</div>
+                <div className="text-[11px] text-slate-500 mt-0.5">
+                  {providerPayments.length} record{providerPayments.length === 1 ? '' : 's'} · Verified total{' '}
+                  <span className="font-semibold text-slate-700">{currency(verifiedPaymentsTotal)}</span>
+                </div>
+              </div>
+            </div>
+            <ChevronDown
+              className={`size-5 text-slate-400 shrink-0 transition-transform ${paymentsOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
+          <AnimatePresence initial={false}>
+            {paymentsOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden border-t border-slate-100"
+              >
+                <div className="p-4 pt-0">
+                  {providerPayments.length === 0 ? (
+                    <p className="text-sm text-slate-500 py-4">No payment records yet for your services.</p>
+                  ) : (
+                    <div className="overflow-x-auto rounded-xl border border-slate-100 mt-3">
+                      <table className="w-full text-left text-xs">
+                        <thead>
+                          <tr className="bg-slate-50 text-slate-500 uppercase tracking-wide text-[10px]">
+                            <th className="py-2.5 px-3 font-bold">When</th>
+                            <th className="py-2.5 px-3 font-bold">Service</th>
+                            <th className="py-2.5 px-3 font-bold">Customer</th>
+                            <th className="py-2.5 px-3 font-bold text-right">Amount</th>
+                            <th className="py-2.5 px-3 font-bold">Status</th>
+                            <th className="py-2.5 px-3 font-bold">Booking</th>
+                            <th className="py-2.5 px-3 font-bold">Payment ID</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {providerPayments.map((p) => (
+                            <tr key={p.id} className="bg-white hover:bg-slate-50/80">
+                              <td className="py-2.5 px-3 text-slate-600 whitespace-nowrap">{formatDateTime(p.created_at)}</td>
+                              <td className="py-2.5 px-3 font-semibold text-slate-800 max-w-[140px] truncate" title={p.service_name}>
+                                {p.service_name || '—'}
+                              </td>
+                              <td className="py-2.5 px-3 text-slate-600 max-w-[160px]">
+                                <div className="truncate font-medium text-slate-800" title={p.customer_name}>
+                                  {p.customer_name || '—'}
+                                </div>
+                                <div className="truncate text-[10px] text-slate-400" title={p.customer_email}>
+                                  {p.customer_email || ''}
+                                </div>
+                              </td>
+                              <td className="py-2.5 px-3 text-right font-bold text-slate-900">{currency(p.amount)}</td>
+                              <td className="py-2.5 px-3">
+                                <span
+                                  className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+                                    p.signature_status === 'verified'
+                                      ? 'bg-emerald-100 text-emerald-800'
+                                      : 'bg-rose-100 text-rose-800'
+                                  }`}
+                                >
+                                  {p.signature_status || '—'}
+                                </span>
+                              </td>
+                              <td className="py-2.5 px-3 text-slate-600">{p.booking_id != null ? `#${p.booking_id}` : '—'}</td>
+                              <td className="py-2.5 px-3 font-mono text-[10px] text-slate-500 max-w-[120px] truncate" title={p.payment_id}>
+                                {p.payment_id || '—'}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </section>
 
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -463,6 +590,11 @@ export default function ProviderDashboard() {
                 {recentBookings.length === 0 && <p className="text-xs text-slate-500">No recent bookings.</p>}
                 {recentBookings.map((b) => {
                   const svc = serviceById.get(Number(b.service_id));
+                  const paid = Number(b.paid_amount);
+                  const fromPaid = Number.isFinite(paid) && paid > 0;
+                  const fromListPrice =
+                    svc?.price != null ? Number(svc.price) * Number(b.quantity || 1) : null;
+                  const lineTotal = fromPaid ? paid : fromListPrice;
                   return (
                     <div key={b.id} className="rounded-xl border border-slate-100 p-2.5">
                       <div className="flex items-center justify-between">
@@ -472,7 +604,7 @@ export default function ProviderDashboard() {
                       <p className="text-xs font-bold truncate mt-1">{svc?.name || `Service #${b.service_id}`}</p>
                       <p className="text-[11px] text-slate-500 mt-1">Customer #{b.customer_id || '-'} | Qty {b.quantity}</p>
                       <div className="mt-1.5 text-xs font-bold text-primary inline-flex items-center gap-1">
-                        {svc?.price != null ? currency(Number(svc.price) * Number(b.quantity || 1)) : 'TBD'}
+                        {lineTotal != null ? currency(lineTotal) : '—'}
                         <ChevronRight className="size-3" />
                       </div>
                     </div>

@@ -114,10 +114,10 @@ export default function Register() {
         />
       </div>
 
-      <div className="max-w-3xl w-full relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+      <div className="max-w-6xl w-full relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           {/* Left Side - Info */}
-          <div className="lg:col-span-2 space-y-6 hidden lg:block">
+          <div className="lg:col-span-4 space-y-6 hidden lg:block">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -170,7 +170,7 @@ export default function Register() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="lg:col-span-3 bg-white rounded-[2rem] border border-slate-100 shadow-xl p-6 md:p-8"
+            className="lg:col-span-8 bg-white rounded-[2rem] border border-slate-100 shadow-xl p-6 md:p-10"
           >
             <div className="text-center lg:text-left mb-7 space-y-2">
               <h2 className="text-2xl font-black tracking-tight text-slate-900">Create Account</h2>
@@ -240,7 +240,7 @@ export default function Register() {
                       name="name"
                       value={form.name}
                       onChange={onChange}
-                      placeholder="John Doe"
+                      placeholder="Sandeep"
                       className="w-full bg-slate-50 border border-slate-100 rounded-2xl pl-14 pr-6 py-3.5 text-slate-900 font-bold focus:ring-4 focus:ring-primary/20 transition-all outline-none"
                     />
                   </div>
@@ -256,7 +256,7 @@ export default function Register() {
                       name="email"
                       value={form.email}
                       onChange={onChange}
-                      placeholder="john@example.com"
+                      placeholder="sandeep@example.com"
                       className="w-full bg-slate-50 border border-slate-100 rounded-2xl pl-14 pr-6 py-3.5 text-slate-900 font-bold focus:ring-4 focus:ring-primary/20 transition-all outline-none"
                     />
                   </div>
@@ -287,7 +287,7 @@ export default function Register() {
                       name="address"
                       value={form.address}
                       onChange={onChange}
-                      placeholder="e.g. Mumbai"
+                      placeholder="e.g. Lucknow"
                       className="w-full bg-slate-50 border border-slate-100 rounded-2xl pl-14 pr-6 py-3.5 text-slate-900 font-bold focus:ring-4 focus:ring-primary/20 transition-all outline-none"
                     />
                   </div>

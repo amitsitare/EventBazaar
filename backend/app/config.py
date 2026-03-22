@@ -63,6 +63,7 @@ class Settings(BaseModel):
     razorpay_key_secret: str = os.getenv("RAZORPAY_KEY_SECRET", "")
 
     # SMTP email configuration (booking confirmation)
+    # smtp_enabled reflects explicit SMTP_ENABLED=true; see smtp_booking_emails_active for when we actually send.
     smtp_enabled: bool = os.getenv("SMTP_ENABLED", "false").lower() == "true"
     smtp_host: str = os.getenv("SMTP_HOST", "")
     smtp_port: int = int(os.getenv("SMTP_PORT", "587"))
@@ -73,6 +74,27 @@ class Settings(BaseModel):
     smtp_use_tls: bool = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
     smtp_use_ssl: bool = os.getenv("SMTP_USE_SSL", "false").lower() == "true"
     admin_emails_csv: str = os.getenv("ADMIN_EMAILS", "")
+
+    @property
+    def smtp_booking_emails_active(self) -> bool:
+        """
+        Whether to attempt sending booking confirmation emails.
+
+        Requires SMTP_HOST and SMTP_FROM_EMAIL. If SMTP_ENABLED is unset or empty, sending is ON
+        whenever those are set (so a filled-in .env works without an extra flag). Set SMTP_ENABLED
+        to false/0/no to turn off; true/1/yes to force on when configured.
+        """
+        if not (self.smtp_host or "").strip() or not (self.smtp_from_email or "").strip():
+            return False
+        raw = os.getenv("SMTP_ENABLED")
+        if raw is None or raw.strip() == "":
+            return True
+        v = raw.strip().lower()
+        if v in ("false", "0", "no"):
+            return False
+        if v in ("true", "1", "yes"):
+            return True
+        return False
 
     @property
     def admin_emails(self) -> list[str]:

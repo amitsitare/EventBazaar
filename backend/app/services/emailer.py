@@ -1,9 +1,12 @@
+import logging
 import smtplib
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from ..config import settings
+
+logger = logging.getLogger(__name__)
 
 
 def _build_booking_html(details: dict) -> str:
@@ -52,11 +55,21 @@ def send_booking_confirmation_email(
     invoice_bytes: bytes,
     invoice_filename: str,
 ) -> None:
-    if not settings.smtp_enabled:
+    to_email = (to_email or "").strip()
+    if not to_email:
+        logger.warning("Skipping booking confirmation email: customer has no email address")
         return
 
-    if not settings.smtp_host or not settings.smtp_from_email:
-        raise ValueError("SMTP is enabled but SMTP_HOST or SMTP_FROM_EMAIL is missing")
+    if not settings.smtp_booking_emails_active:
+        if not (settings.smtp_host or "").strip() or not (settings.smtp_from_email or "").strip():
+            logger.info(
+                "Skipping booking confirmation email: set SMTP_HOST and SMTP_FROM_EMAIL in the environment"
+            )
+        else:
+            logger.info(
+                "Skipping booking confirmation email: SMTP_ENABLED is false (or not true/1/yes)"
+            )
+        return
 
     msg = MIMEMultipart("mixed")
     from_name = settings.smtp_from_name.strip() or "EventBazaar"

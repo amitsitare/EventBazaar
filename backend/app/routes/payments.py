@@ -238,6 +238,52 @@ async def my_payments(payload=Depends(get_current_user), conn=Depends(get_db_con
     ]
 
 
+@router.get("/provider")
+async def provider_payments(payload=Depends(get_current_user), conn=Depends(get_db_conn)):
+    """All payment rows for services owned by the logged-in provider."""
+    if payload.get("role") != "provider":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Providers only")
+    provider_id = int(payload["sub"])
+    async with conn.cursor() as cur:
+        await cur.execute(
+            """
+            SELECT
+                p.id, p.order_id, p.payment_id, p.signature_status, p.amount, p.user_id,
+                p.service_id, p.booking_id, p.created_at,
+                s.name AS service_name,
+                u.name AS customer_name, u.email AS customer_email,
+                b.event_date, b.status AS booking_status
+            FROM payments p
+            JOIN services s ON s.id = p.service_id AND s.provider_id = %s
+            JOIN users u ON u.id = p.user_id
+            LEFT JOIN bookings b ON b.id = p.booking_id
+            ORDER BY p.id DESC
+            LIMIT 500
+            """,
+            (provider_id,),
+        )
+        rows = await cur.fetchall()
+    return [
+        {
+            "id": r[0],
+            "order_id": r[1],
+            "payment_id": r[2],
+            "signature_status": r[3],
+            "amount": float(r[4] or 0),
+            "user_id": r[5],
+            "service_id": r[6],
+            "booking_id": r[7],
+            "created_at": r[8].isoformat() if r[8] else None,
+            "service_name": r[9],
+            "customer_name": r[10],
+            "customer_email": r[11],
+            "event_date": str(r[12]) if r[12] else None,
+            "booking_status": r[13],
+        }
+        for r in rows
+    ]
+
+
 @router.get("/all")
 async def all_payments(payload=Depends(get_current_user), conn=Depends(get_db_conn)):
     user_id = int(payload["sub"])

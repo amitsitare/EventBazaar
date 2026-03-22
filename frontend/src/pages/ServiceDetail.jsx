@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { API_BASE, authHeader, getAuth } from '../auth.js';
 
 export default function ServiceDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [service, setService] = useState(null);
   const [items, setItems] = useState([]);
   const [itemQuantities, setItemQuantities] = useState({});
@@ -15,6 +16,7 @@ export default function ServiceDetail() {
   const [notes, setNotes] = useState('');
   const [message, setMessage] = useState('');
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [bookingSuccessOpen, setBookingSuccessOpen] = useState(false);
   const [reviews, setReviews] = useState([]);
 
   const load = async () => {
@@ -29,6 +31,20 @@ export default function ServiceDetail() {
     setItemQuantities({});
   };
   useEffect(() => { load(); }, [id]);
+
+  useEffect(() => {
+    if (!bookingSuccessOpen) return;
+    const t = setTimeout(() => {
+      setBookingSuccessOpen(false);
+      navigate('/my-bookings');
+    }, 2800);
+    return () => clearTimeout(t);
+  }, [bookingSuccessOpen, navigate]);
+
+  const goToMyBookings = () => {
+    setBookingSuccessOpen(false);
+    navigate('/my-bookings');
+  };
 
   const setItemQty = (itemId, qty) => {
     const n = Math.max(0, Number(qty) || 0);
@@ -173,7 +189,8 @@ export default function ServiceDetail() {
         duration_hours: durationHours ? Number(durationHours) : undefined,
       }, { headers: authHeader() });
 
-      setMessage('Payment successful and booking placed!');
+      setMessage('');
+      setBookingSuccessOpen(true);
     } catch (err) {
       setMessage(err.response?.data?.detail || 'Booking failed');
     } finally {
@@ -503,6 +520,34 @@ export default function ServiceDetail() {
           </section>
         )}
       </div>
+
+      {bookingSuccessOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="booking-success-title"
+        >
+          <div className="w-full max-w-md rounded-3xl border border-emerald-100 bg-white p-6 shadow-2xl ring-1 ring-slate-100">
+            <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-emerald-100">
+              <span className="material-symbols-outlined text-3xl text-emerald-600">check_circle</span>
+            </div>
+            <h2 id="booking-success-title" className="text-center text-xl font-black tracking-tight text-slate-900">
+              Payment successful
+            </h2>
+            <p className="mt-2 text-center text-sm leading-relaxed text-slate-600">
+              Your booking is confirmed. Taking you to <span className="font-semibold text-slate-800">My Bookings</span> in a moment.
+            </p>
+            <button
+              type="button"
+              onClick={goToMyBookings}
+              className="mt-6 w-full rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-3 text-sm font-bold text-white shadow-md transition hover:from-emerald-700 hover:to-teal-700"
+            >
+              View my bookings now
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

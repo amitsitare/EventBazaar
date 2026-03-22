@@ -17,6 +17,16 @@ body {
   overflow-x: hidden;
 }
 
+html[lang='hi'] body {
+  font-family:
+    system-ui,
+    'Segoe UI',
+    'Nirmala UI',
+    'Mangal',
+    'Noto Sans Devanagari',
+    sans-serif;
+}
+
 /* Hero Section */
 .hero-section {
   position: relative;

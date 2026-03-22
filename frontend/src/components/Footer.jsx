@@ -1,4 +1,9 @@
+import { useLanguage } from '../i18n/LanguageContext.jsx';
+
 export default function Footer() {
+  const { t } = useLanguage();
+  const year = new Date().getFullYear();
+
   return (
     <footer className="hidden md:block bg-background-dark border-t border-white/10 text-white relative overflow-hidden">
       {/* Subtle glow layers */}
@@ -20,13 +25,10 @@ export default function Footer() {
                 EventBazaar
               </span>
             </div>
-            <p className="text-sm leading-relaxed text-white/60 max-w-sm">
-              Plan weddings, parties, and corporate events with trusted vendors across catering,
-              decor, photography, music, venues and more.
-            </p>
+            <p className="text-sm leading-relaxed text-white/60 max-w-sm">{t('footerTagline')}</p>
             <div className="flex items-center gap-3 text-xs text-white/50">
               <span className="inline-flex h-7 items-center rounded-full bg-primary/10 px-3 font-semibold text-primary">
-                Made for unforgettable celebrations
+                {t('footerBadge')}
               </span>
             </div>
           </div>
@@ -34,7 +36,7 @@ export default function Footer() {
           {/* Customer links */}
           <div>
             <h4 className="text-sm font-semibold tracking-wide text-white/90 uppercase mb-5">
-              For Customers
+              {t('footerForCustomers')}
             </h4>
             <ul className="space-y-3 text-sm text-white/60">
               <li className="group">
@@ -46,7 +48,7 @@ export default function Footer() {
                     browse_activity
                   </span>
                   <span className="group-hover:text-primary transition-colors">
-                    Browse &amp; book vendors
+                    {t('footerBrowseBook')}
                   </span>
                 </a>
               </li>
@@ -59,7 +61,7 @@ export default function Footer() {
                     workspace_premium
                   </span>
                   <span className="group-hover:text-primary transition-colors">
-                    Featured weddings &amp; stories
+                    {t('footerFeaturedStories')}
                   </span>
                 </a>
               </li>
@@ -71,7 +73,9 @@ export default function Footer() {
                   <span className="material-symbols-outlined text-base text-primary/70 group-hover:text-primary transition-colors">
                     help
                   </span>
-                  <span className="group-hover:text-primary transition-colors">Help center</span>
+                  <span className="group-hover:text-primary transition-colors">
+                    {t('footerHelpCenter')}
+                  </span>
                 </a>
               </li>
               <li className="group">
@@ -82,7 +86,9 @@ export default function Footer() {
                   <span className="material-symbols-outlined text-base text-primary/70 group-hover:text-primary transition-colors">
                     verified_user
                   </span>
-                  <span className="group-hover:text-primary transition-colors">Safety &amp; trust</span>
+                  <span className="group-hover:text-primary transition-colors">
+                    {t('footerSafetyTrust')}
+                  </span>
                 </a>
               </li>
             </ul>
@@ -91,7 +97,7 @@ export default function Footer() {
           {/* Vendor links + socials */}
           <div>
             <h4 className="text-sm font-semibold tracking-wide text-white/90 uppercase mb-5">
-              For Vendors
+              {t('footerForVendors')}
             </h4>
             <ul className="space-y-3 text-sm text-white/60 mb-6">
               <li className="group">
@@ -102,7 +108,7 @@ export default function Footer() {
                   <span className="material-symbols-outlined text-base text-primary/70 group-hover:text-primary transition-colors">
                     storefront
                   </span>
-                  <span className="group-hover:text-primary transition-colors">Join EventBazaar</span>
+                  <span className="group-hover:text-primary transition-colors">{t('footerJoin')}</span>
                 </a>
               </li>
               <li className="group">
@@ -113,7 +119,9 @@ export default function Footer() {
                   <span className="material-symbols-outlined text-base text-primary/70 group-hover:text-primary transition-colors">
                     trending_up
                   </span>
-                  <span className="group-hover:text-primary transition-colors">Grow your business</span>
+                  <span className="group-hover:text-primary transition-colors">
+                    {t('footerGrowBusiness')}
+                  </span>
                 </a>
               </li>
               <li className="group">
@@ -125,7 +133,7 @@ export default function Footer() {
                     equalizer
                   </span>
                   <span className="group-hover:text-primary transition-colors">
-                    Pricing &amp; plans
+                    {t('footerPricingPlans')}
                   </span>
                 </a>
               </li>
@@ -133,16 +141,25 @@ export default function Footer() {
 
             <div className="space-y-2">
               <p className="text-xs font-semibold uppercase tracking-wide text-white/50">
-                Connect
+                {t('footerConnect')}
               </p>
               <div className="flex gap-3">
-                <button className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/10 text-primary hover:bg-primary hover:text-white transition-colors">
+                <button
+                  type="button"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/10 text-primary hover:bg-primary hover:text-white transition-colors"
+                >
                   <i className="fab fa-instagram text-sm" />
                 </button>
-                <button className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/10 text-primary hover:bg-primary hover:text-white transition-colors">
+                <button
+                  type="button"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/10 text-primary hover:bg-primary hover:text-white transition-colors"
+                >
                   <i className="fab fa-facebook-f text-sm" />
                 </button>
-                <button className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/10 text-primary hover:bg-primary hover:text-white transition-colors">
+                <button
+                  type="button"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/10 text-primary hover:bg-primary hover:text-white transition-colors"
+                >
                   <i className="fab fa-linkedin-in text-sm" />
                 </button>
               </div>
@@ -151,27 +168,25 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-6 md:flex-row md:items-center md:justify-between">
-          <p className="text-xs text-white/50">
-            © {new Date().getFullYear()} EventBazaar. All rights reserved.
-          </p>
+          <p className="text-xs text-white/50">{t('footerCopyright', { year })}</p>
           <div className="flex flex-wrap gap-4 text-xs text-white/50">
             <a
               href="#"
               className="text-primary/80 hover:text-primary transition-colors no-underline"
             >
-              Privacy Policy
+              {t('footerPrivacy')}
             </a>
             <a
               href="#"
               className="text-primary/80 hover:text-primary transition-colors no-underline"
             >
-              Terms of Service
+              {t('footerTerms')}
             </a>
             <a
               href="#"
               className="text-primary/80 hover:text-primary transition-colors no-underline"
             >
-              Cookie Policy
+              {t('footerCookies')}
             </a>
           </div>
         </div>

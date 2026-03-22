@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../i18n/LanguageContext.jsx';
 import { motion } from 'framer-motion';
 import { 
   ArrowRight, 
@@ -38,6 +39,38 @@ function ScrollReveal({ children, className = '', delay = 0 }) {
 }
 
 export default function Home() {
+  const { t } = useLanguage();
+
+  const trustItems = [
+    {
+      icon: ShieldCheck,
+      titleKey: 'homeTrustVerifiedTitle',
+      descKey: 'homeTrustVerifiedDesc',
+    },
+    {
+      icon: Star,
+      titleKey: 'homeTrustRatedTitle',
+      descKey: 'homeTrustRatedDesc',
+    },
+    {
+      icon: CreditCard,
+      titleKey: 'homeTrustQuotesTitle',
+      descKey: 'homeTrustQuotesDesc',
+    },
+    {
+      icon: CalendarPlus,
+      titleKey: 'homeTrustBookingTitle',
+      descKey: 'homeTrustBookingDesc',
+    },
+  ];
+
+  const vendorCategoryKey = {
+    Catering: 'homeCatCateringShort',
+    Photography: 'homeCatPhotoShort',
+    Music: 'homeCatMusic',
+    Decor: 'homeCatDecorShort',
+  };
+
   return (
     <div className="min-h-screen font-sans antialiased relative pb-16 md:pb-0">
       <main className="bg-background-light relative overflow-hidden">
@@ -73,7 +106,7 @@ export default function Home() {
                 transition={{ duration: 2, ease: "easeOut" }}
                 className="h-full w-full object-cover grayscale-[0.5]"
                 src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2069&auto=format&fit=crop"
-                alt="Vibrant event celebration"
+                alt={t('homeHeroImgAlt')}
                 referrerPolicy="no-referrer"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-background-dark via-background-dark/80 to-transparent" />
@@ -99,7 +132,7 @@ export default function Home() {
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md text-xs font-bold uppercase tracking-[0.25em] text-primary"
                 >
                   <span className="size-2 rounded-full bg-primary animate-pulse" />
-                  Illuminating Your Best Moments
+                  {t('homeHeroBadge')}
                 </motion.div>
 
                 <div className="space-y-6">
@@ -110,7 +143,7 @@ export default function Home() {
                       transition={{ duration: 0.8, delay: 1 }}
                       className="block"
                     >
-                      Light Up
+                      {t('homeHeroLightUp')}
                     </motion.span>
                     <motion.span 
                       initial={{ opacity: 0, x: -50 }}
@@ -120,7 +153,7 @@ export default function Home() {
                     >
                       <span className="absolute -inset-x-6 -inset-y-3 bg-primary/10 blur-3xl rounded-full" />
                       <span className="relative font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-amber-200">
-                        Your Event
+                        {t('homeHeroYourEvent')}
                       </span>
                     </motion.span>
                   </h1>
@@ -130,8 +163,7 @@ export default function Home() {
                     transition={{ delay: 1.5, duration: 1 }}
                     className="text-xl sm:text-2xl font-medium text-white/70 max-w-xl leading-relaxed"
                   >
-                    Discover <span className="italic font-bold text-primary underline underline-offset-8 decoration-primary/30">brilliant</span> vendors who bring 
-                    energy, warmth, and style to every celebration.
+                    {t('homeHeroSub')}
                   </motion.p>
                 </div>
 
@@ -145,11 +177,14 @@ export default function Home() {
                     to="/services"
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-3 rounded-2xl bg-primary text-background-dark px-10 py-4 text-lg font-black shadow-2xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 transition-all active:scale-95"
                   >
-                    Start Planning
+                    {t('homeStartPlanning')}
                     <ArrowRight className="size-5" />
                   </Link>
-                  <button className="w-full sm:w-auto inline-flex items-center justify-center gap-3 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 text-white px-8 py-4 text-lg font-bold hover:bg-white/10 transition-all">
-                    View Gallery
+                  <button
+                    type="button"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-3 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 text-white px-8 py-4 text-lg font-bold hover:bg-white/10 transition-all"
+                  >
+                    {t('homeViewGallery')}
                   </button>
                 </motion.div>
               </div>
@@ -178,17 +213,18 @@ export default function Home() {
             <div className="space-y-4">
               <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-primary">
                 <span className="size-1.5 rounded-full bg-primary" />
-                The Collection
+                {t('homeCollectionBadge')}
               </span>
               <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 leading-[0.9]">
-                Everything you need <br />for the perfect day.
+                {t('homeCollectionTitleLine1')} <br />
+                {t('homeCollectionTitleLine2')}
               </h2>
             </div>
             <Link
               to="/services"
               className="inline-flex items-center gap-2 rounded-full border-2 border-slate-200 px-8 py-4 text-sm font-bold uppercase tracking-[0.1em] text-slate-600 hover:border-primary hover:text-primary transition-all"
             >
-              Explore all
+              {t('homeExploreAll')}
               <ArrowRight className="size-4" />
             </Link>
           </ScrollReveal>
@@ -199,14 +235,14 @@ export default function Home() {
               <img 
                 src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=2070&auto=format&fit=crop" 
                 className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700"
-                alt="Catering"
+                alt={t('homeCatCatering')}
                 referrerPolicy="no-referrer"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-orange-900/80 via-transparent to-transparent" />
               <div className="absolute bottom-10 left-10 text-white">
                 <Utensils className="size-12 mb-4 text-primary" />
-                <h3 className="text-3xl font-black tracking-tight">Catering</h3>
-                <p className="text-white/70 font-medium">From street food to fine dining</p>
+                <h3 className="text-3xl font-black tracking-tight">{t('homeCatCatering')}</h3>
+                <p className="text-white/70 font-medium">{t('homeCatCateringDesc')}</p>
               </div>
             </ScrollReveal>
 
@@ -215,13 +251,13 @@ export default function Home() {
               <img 
                 src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=2070&auto=format&fit=crop" 
                 className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700"
-                alt="Venues"
+                alt={t('homeCatVenues')}
                 referrerPolicy="no-referrer"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-amber-900/80 via-transparent to-transparent" />
               <div className="absolute bottom-8 left-8 text-white">
                 <Building2 className="size-10 mb-2 text-primary" />
-                <h3 className="text-2xl font-black tracking-tight">Venues</h3>
+                <h3 className="text-2xl font-black tracking-tight">{t('homeCatVenues')}</h3>
               </div>
             </ScrollReveal>
 
@@ -229,14 +265,18 @@ export default function Home() {
             <ScrollReveal delay={200} className="group relative overflow-hidden rounded-[3rem] bg-amber-50">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center group-hover:bg-primary transition-colors">
                 <Camera className="size-12 text-amber-600 group-hover:text-background-dark transition-colors" />
-                <span className="font-black text-slate-900 group-hover:text-background-dark">Photography</span>
+                <span className="font-black text-slate-900 group-hover:text-background-dark">
+                  {t('homeCatPhoto')}
+                </span>
               </div>
             </ScrollReveal>
 
             <ScrollReveal delay={300} className="group relative overflow-hidden rounded-[3rem] bg-emerald-50">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center group-hover:bg-primary transition-colors">
                 <Trees className="size-12 text-emerald-600 group-hover:text-background-dark transition-colors" />
-                <span className="font-black text-slate-900 group-hover:text-background-dark">Decor</span>
+                <span className="font-black text-slate-900 group-hover:text-background-dark">
+                  {t('homeCatDecor')}
+                </span>
               </div>
             </ScrollReveal>
           </div>
@@ -252,41 +292,45 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
               <ScrollReveal className="space-y-8">
                 <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.25em] text-primary">
-                  Brilliance in every detail
+                  {t('homeTrustBadge')}
                 </span>
                 <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9]">
-                  Your trusted <br />partner for <br />
+                  {t('homeTrustLine1')} <br />
+                  {t('homeTrustLine2')} <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-amber-200">
-                    unforgettable <br />events.
+                    {t('homeTrustLine3')}
                   </span>
                 </h2>
-                <p className="text-xl text-white/60 max-w-md leading-relaxed">
-                  We've built a platform where quality meets convenience, ensuring every host finds their perfect match.
-                </p>
+                <p className="text-xl text-white/60 max-w-md leading-relaxed">{t('homeTrustBody')}</p>
                 <div className="flex items-center gap-8 pt-4">
                   <div>
                     <div className="text-4xl font-black text-primary">10k+</div>
-                    <div className="text-xs font-bold uppercase tracking-widest text-white/40">Verified Vendors</div>
+                    <div className="text-xs font-bold uppercase tracking-widest text-white/40">
+                      {t('homeStatVendors')}
+                    </div>
                   </div>
                   <div className="w-px h-12 bg-white/10" />
                   <div>
                     <div className="text-4xl font-black text-primary">50k+</div>
-                    <div className="text-xs font-bold uppercase tracking-widest text-white/40">Happy Hosts</div>
+                    <div className="text-xs font-bold uppercase tracking-widest text-white/40">
+                      {t('homeStatHosts')}
+                    </div>
                   </div>
                 </div>
               </ScrollReveal>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  { icon: ShieldCheck, title: 'Verified', desc: 'Identity-checked pros.' },
-                  { icon: Star, title: 'Rated', desc: 'Transparent reviews.' },
-                  { icon: CreditCard, title: 'Quotes', desc: 'Instant price comparison.' },
-                  { icon: CalendarPlus, title: 'Booking', desc: 'Seamless experience.' },
-                ].map((item, idx) => (
-                  <ScrollReveal key={item.title} delay={idx * 100} className="p-8 rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-primary hover:text-background-dark transition-all group cursor-default">
+                {trustItems.map((item, idx) => (
+                  <ScrollReveal
+                    key={item.titleKey}
+                    delay={idx * 100}
+                    className="p-8 rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-primary hover:text-background-dark transition-all group cursor-default"
+                  >
                     <item.icon className="size-10 text-primary group-hover:text-background-dark mb-6 transition-colors" />
-                    <h4 className="text-xl font-bold mb-2">{item.title}</h4>
-                    <p className="text-sm text-white/40 group-hover:text-background-dark/60 transition-colors leading-relaxed">{item.desc}</p>
+                    <h4 className="text-xl font-bold mb-2">{t(item.titleKey)}</h4>
+                    <p className="text-sm text-white/40 group-hover:text-background-dark/60 transition-colors leading-relaxed">
+                      {t(item.descKey)}
+                    </p>
                   </ScrollReveal>
                 ))}
               </div>
@@ -298,8 +342,8 @@ export default function Home() {
         <section className="py-32 max-w-7xl mx-auto px-6">
           <ScrollReveal className="flex items-center justify-between mb-16">
             <div className="space-y-2">
-              <h3 className="text-3xl font-black tracking-tight">Featured Professionals</h3>
-              <p className="text-slate-500 font-medium">Handpicked top-rated vendors for your big day</p>
+              <h3 className="text-3xl font-black tracking-tight">{t('homeFeaturedTitle')}</h3>
+              <p className="text-slate-500 font-medium">{t('homeFeaturedSubtitle')}</p>
             </div>
             <div className="flex gap-3">
               <button className="size-12 rounded-full border-2 border-slate-100 flex items-center justify-center hover:bg-slate-50 transition-all">
@@ -351,7 +395,7 @@ export default function Home() {
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-black text-primary uppercase tracking-wider">
-                    {vendor.cat}
+                    {t(vendorCategoryKey[vendor.cat] ?? 'homeCatCateringShort')}
                   </div>
                 </div>
                 <div className="p-8">
@@ -364,7 +408,9 @@ export default function Home() {
                   </div>
                   <div className="flex items-center justify-between pt-4 border-t border-slate-50">
                     <div>
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Starting from</span>
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">
+                        {t('homeStartingFrom')}
+                      </span>
                       <span className="text-primary text-xl font-black">{vendor.price}</span>
                     </div>
                     <button className="size-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-white transition-all">
@@ -383,13 +429,13 @@ export default function Home() {
             <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_0%_50%,rgba(251,191,36,0.4),transparent_50%)]" />
             <div className="relative z-10 px-10 py-20 md:px-20 flex flex-col md:flex-row items-center justify-between gap-12">
               <div className="max-w-2xl space-y-6 text-center md:text-left">
-                <span className="text-primary text-xs font-bold uppercase tracking-[0.3em]">Partner with us</span>
+                <span className="text-primary text-xs font-bold uppercase tracking-[0.3em]">
+                  {t('homePartnerBadge')}
+                </span>
                 <h2 className="text-4xl md:text-6xl font-black text-white leading-tight">
-                  Grow Your Business with EventBazaar
+                  {t('homePartnerTitle')}
                 </h2>
-                <p className="text-white/70 text-lg font-medium">
-                  Reach thousands of customers planning their next event. List your services, manage bookings, and grow your reputation.
-                </p>
+                <p className="text-white/70 text-lg font-medium">{t('homePartnerBody')}</p>
               </div>
               <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0">
                 <Link
@@ -397,14 +443,14 @@ export default function Home() {
                   className="inline-flex items-center gap-3 bg-primary text-background-dark font-black px-10 py-5 rounded-2xl shadow-2xl hover:scale-105 transition-all"
                 >
                   <Store className="size-6" />
-                  List Your Service
+                  {t('homeListService')}
                 </Link>
                 <Link
-                  to="/contact"
+                  to="/contact-us"
                   className="inline-flex items-center gap-3 border-2 border-white/20 text-white font-bold px-8 py-5 rounded-2xl hover:bg-white/10 transition-all"
                 >
                   <HelpCircle className="size-6" />
-                  How it Works
+                  {t('homeHowItWorks')}
                 </Link>
               </div>
             </div>
@@ -415,29 +461,27 @@ export default function Home() {
         <section className="py-32 px-6">
           <ScrollReveal className="max-w-5xl mx-auto text-center space-y-10">
             <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 leading-[0.9]">
-              Ready to turn your date into <br />
-              <span className="italic font-serif font-normal text-primary">an unforgettable celebration?</span>
+              {t('homeReadyTitle1')} <br />
+              <span className="italic font-serif font-normal text-primary">{t('homeReadyTitle2')}</span>
             </h2>
-            <p className="text-xl text-slate-500 max-w-2xl mx-auto font-medium">
-              Join thousands of happy hosts who trusted EventBazaar for their weddings, birthdays, and corporate events.
-            </p>
+            <p className="text-xl text-slate-500 max-w-2xl mx-auto font-medium">{t('homeReadyBody')}</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
               <Link
                 to="/services"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-3 rounded-2xl bg-primary text-white px-12 py-6 text-xl font-black shadow-2xl shadow-primary/40 hover:shadow-primary/60 hover:-translate-y-1 transition-all"
               >
-                Get Started Now
+                {t('homeGetStartedNow')}
                 <ArrowRight className="size-6" />
               </Link>
               <div className="flex items-center gap-4 text-slate-400">
                 <div className="flex -space-x-3">
                   {[1,2,3,4].map(i => (
                     <div key={i} className="size-10 rounded-full border-2 border-white bg-slate-200 overflow-hidden">
-                      <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" />
+                      <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="" />
                     </div>
                   ))}
                 </div>
-                <span className="text-sm font-bold">Trusted by 10k+ hosts</span>
+                <span className="text-sm font-bold">{t('homeTrustedBy')}</span>
               </div>
             </div>
           </ScrollReveal>
@@ -449,19 +493,19 @@ export default function Home() {
         <div className="flex justify-around items-center h-20 px-4">
           <Link to="/" className="flex flex-col items-center gap-1 text-primary">
             <HomeIcon className="size-6" />
-            <span className="text-[10px] font-black uppercase tracking-wider">Home</span>
+            <span className="text-[10px] font-black uppercase tracking-wider">{t('mobileHome')}</span>
           </Link>
           <Link to="/services" className="flex flex-col items-center gap-1 text-slate-400">
             <Search className="size-6" />
-            <span className="text-[10px] font-black uppercase tracking-wider">Search</span>
+            <span className="text-[10px] font-black uppercase tracking-wider">{t('mobileSearch')}</span>
           </Link>
           <Link to="/my-bookings" className="flex flex-col items-center gap-1 text-slate-400">
             <Calendar className="size-6" />
-            <span className="text-[10px] font-black uppercase tracking-wider">Bookings</span>
+            <span className="text-[10px] font-black uppercase tracking-wider">{t('mobileBookings')}</span>
           </Link>
           <Link to="/profile" className="flex flex-col items-center gap-1 text-slate-400">
             <User className="size-6" />
-            <span className="text-[10px] font-black uppercase tracking-wider">Profile</span>
+            <span className="text-[10px] font-black uppercase tracking-wider">{t('mobileProfile')}</span>
           </Link>
         </div>
       </nav>

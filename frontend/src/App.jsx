@@ -12,6 +12,7 @@ import ProviderDashboard from './pages/ProviderDashboard.jsx';
 import ServiceItems from './pages/ServiceItems.jsx';
 import MyBookings from './pages/MyBookings.jsx';
 import ContactUs from './pages/ContactUs.jsx';
+import ServicesOverview from './pages/ServicesOverview.jsx';
 import PaymentLedger from './pages/PaymentLedger.jsx';
 import { getAuth } from './auth.js';
 
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/services" element={<ServiceList />} />
           <Route path="/services/:id" element={<ServiceDetail />} />
+          <Route path="/event-services" element={<ServicesOverview />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/dashboard" element={
             <PrivateRoute role="provider"><ProviderDashboard /></PrivateRoute>

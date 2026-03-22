@@ -29,7 +29,7 @@ export default function Navbar() {
             alt="EventBazaar logo"
             className="h-7 w-7 rounded-lg shadow-sm object-contain"
           />
-          <h1 className="text-lg md:text-xl font-extrabold tracking-tight text-primary">
+          <h1 className="text-lg md:text-xl font-extrabold tracking-tight text-slate-700">
             EventBazaar
           </h1>
         </NavLink>
@@ -39,11 +39,14 @@ export default function Navbar() {
           <NavLink to="/" className={navLinkClass}>
             Home
           </NavLink>
-          <NavLink to="/services" className={navLinkClass}>
+          <NavLink to="/services" end className={navLinkClass}>
             Find Vendors
           </NavLink>
-          <NavLink to="/services" className={navLinkClass}>
+          <NavLink to="/event-services" className={navLinkClass}>
             Services
+          </NavLink>
+          <NavLink to="/contact-us" className={navLinkClass}>
+            Contact us
           </NavLink>
         </nav>
 

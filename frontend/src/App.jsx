@@ -19,7 +19,7 @@ import ProviderPayments from './pages/ProviderPayments.jsx';
 import ProviderBookings from './pages/ProviderBookings.jsx';
 import ProviderCalendar from './pages/ProviderCalendar.jsx';
 import { getAuth } from './auth.js';
-
+// Protected route
 function PrivateRoute({ children, role }) {
   const auth = getAuth();
   if (!auth.token) return <Navigate to="/login" replace />;

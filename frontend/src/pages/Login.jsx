@@ -4,8 +4,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, ArrowRight, CheckCircle2, AlertCircle, LogIn } from 'lucide-react';
 import { API_BASE, setAuth } from '../auth.js';
+import { useLanguage } from '../i18n/LanguageContext.jsx';
 
 export default function Login() {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -30,14 +32,14 @@ export default function Login() {
       });
 
       setAuth(token.access_token, profile.role);
-      setSuccess('Login successful! Redirecting...');
+      setSuccess(t('loginSuccess'));
 
       // Small delay so the success banner is visible.
       setTimeout(() => {
         navigate(profile.role === 'provider' ? '/dashboard' : '/my-bookings');
       }, 800);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Login failed. Please check your credentials.');
+      setError(err.response?.data?.detail || t('loginFailed'));
     } finally {
       setLoading(false);
     }
@@ -80,8 +82,8 @@ export default function Login() {
                 <LogIn className="size-6" />
               </motion.div>
               <div className="space-y-2">
-                <h2 className="text-2xl font-black tracking-tight text-slate-900">Welcome Back</h2>
-                <p className="text-sm text-slate-500 font-medium">Log in to manage your events and services.</p>
+                <h2 className="text-2xl font-black tracking-tight text-slate-900">{t('loginWelcome')}</h2>
+                <p className="text-sm text-slate-500 font-medium">{t('loginSubtitle')}</p>
               </div>
             </div>
   
@@ -111,7 +113,7 @@ export default function Login() {
   
             <form onSubmit={onSubmit} className="space-y-5">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Email Address</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">{t('loginEmail')}</label>
                 <div className="relative">
                   <Mail className="absolute left-5 top-1/2 -translate-y-1/2 size-4 text-slate-300" />
                   <input
@@ -128,8 +130,8 @@ export default function Login() {
   
               <div className="space-y-2">
                 <div className="flex justify-between items-center px-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Password</label>
-                  <button type="button" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">Forgot?</button>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('loginPassword')}</label>
+                  <button type="button" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">{t('loginForgot')}</button>
                 </div>
                 <div className="relative">
                   <Lock className="absolute left-5 top-1/2 -translate-y-1/2 size-4 text-slate-300" />
@@ -151,15 +153,15 @@ export default function Login() {
                   disabled={loading}
                   className="w-full bg-primary text-white font-black py-3.5 rounded-2xl shadow-lg hover:scale-[1.01] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  {loading ? 'Signing In...' : 'Sign In'}
+                  {loading ? t('loginSigningIn') : t('loginSignIn')}
                   {!loading && <ArrowRight className="size-4 transition-transform" />}
                 </button>
               </div>
   
               <div className="pt-6 text-center">
                 <p className="text-sm font-bold text-slate-500">
-                  Don't have an account?{' '}
-                  <Link to="/register" className="text-primary hover:underline">Create One</Link>
+                  {t('loginNoAccount')}{' '}
+                  <Link to="/register" className="text-primary hover:underline">{t('loginCreateOne')}</Link>
                 </p>
               </div>
             </form>

@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { API_BASE, authHeader } from '../auth.js';
+import { useLanguage } from '../i18n/LanguageContext.jsx';
 
 export default function MyBookings() {
+  const { t } = useLanguage();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [reviewDrafts, setReviewDrafts] = useState({});
@@ -55,9 +57,9 @@ export default function MyBookings() {
   };
 
   const statusLabel = (status) => {
-    if (status === 'confirmed') return 'Booking successful';
-    if (status === 'pending') return 'Pending';
-    if (status === 'cancelled') return 'Cancelled';
+    if (status === 'confirmed') return t('myBookingsStatusConfirmed');
+    if (status === 'pending') return t('myBookingsStatusPending');
+    if (status === 'cancelled') return t('myBookingsStatusCancelled');
     return status;
   };
 
@@ -97,13 +99,13 @@ export default function MyBookings() {
 
   const submitReview = async (booking) => {
     if (!isReviewEligible(booking)) {
-      setReviewMessage('Review can be submitted after the event date for confirmed bookings.');
+      setReviewMessage(t('myBookingsReviewEligible'));
       return;
     }
     const draft = reviewDrafts[booking.id] || {};
     const rating = Number(draft.rating || booking.review_rating || 0);
     if (!rating || rating < 1 || rating > 5) {
-      setReviewMessage('Please select a rating between 1 and 5 stars.');
+      setReviewMessage(t('myBookingsReviewRatingRange'));
       return;
     }
     setSubmittingReviewId(booking.id);
@@ -120,7 +122,7 @@ export default function MyBookings() {
       await load();
       setReviewMessage(`Review saved for booking #${booking.id}.`);
     } catch (err) {
-      setReviewMessage(err.response?.data?.detail || 'Failed to save review');
+      setReviewMessage(err.response?.data?.detail || t('myBookingsReviewSaveFail'));
     } finally {
       setSubmittingReviewId(null);
     }
@@ -148,13 +150,13 @@ export default function MyBookings() {
         <header className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-3">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-primary mb-1">
-              Your events
+              {t('myBookingsBadge')}
             </p>
             <h1 className="text-2xl md:text-3xl font-black tracking-tight text-primary">
-              My Bookings
+              {t('myBookingsTitle')}
             </h1>
             <p className="text-sm text-slate-500 mt-1">
-              Track all the services you&apos;ve booked in one place.
+              {t('myBookingsSubtitle')}
             </p>
           </div>
         </header>
@@ -172,7 +174,7 @@ export default function MyBookings() {
                   autorenew
                 </span>
               </div>
-              <div>Loading your bookings...</div>
+              <div>{t('myBookingsLoading')}</div>
             </div>
           )}
 
@@ -182,10 +184,10 @@ export default function MyBookings() {
                 <span className="material-symbols-outlined text-3xl">calendar_month</span>
               </div>
               <h2 className="text-base md:text-lg font-bold text-slate-900 mb-1">
-                No bookings yet
+                {t('myBookingsEmptyTitle')}
               </h2>
               <p className="text-sm text-slate-500 max-w-sm mx-auto">
-                Once you book a service, your upcoming and past events will appear here.
+                {t('myBookingsEmptyBody')}
               </p>
             </div>
           )}
@@ -260,13 +262,13 @@ export default function MyBookings() {
                       className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-100 transition"
                     >
                       <span className="material-symbols-outlined text-[15px]">download</span>
-                      Download invoice
+                      {t('myBookingsDownloadInvoice')}
                     </button>
                   </div>
                   {isReviewEligible(b) && (
                     <div className="mt-3 w-full rounded-xl border border-amber-200 bg-amber-50/60 p-3">
                       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-700 mb-2">
-                        Review this service
+                        {t('myBookingsReviewTitle')}
                       </p>
                       <div className="flex flex-wrap items-center gap-2 mb-2">
                         {[1, 2, 3, 4, 5].map((star) => {
@@ -289,7 +291,7 @@ export default function MyBookings() {
                       </div>
                       <textarea
                         rows={2}
-                        placeholder="Share your experience (optional)"
+                        placeholder={t('myBookingsReviewPlaceholder')}
                         value={reviewDrafts[b.id]?.comment ?? b.review_comment ?? ''}
                         onChange={(e) => setDraftField(b.id, 'comment', e.target.value)}
                         className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
@@ -301,7 +303,7 @@ export default function MyBookings() {
                           onClick={() => submitReview(b)}
                           className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 bg-amber-100 px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-200 disabled:opacity-60"
                         >
-                          {submittingReviewId === b.id ? 'Saving...' : b.review_rating ? 'Update review' : 'Submit review'}
+                          {submittingReviewId === b.id ? t('myBookingsSaving') : b.review_rating ? t('myBookingsUpdateReview') : t('myBookingsSubmitReview')}
                         </button>
                       </div>
                     </div>

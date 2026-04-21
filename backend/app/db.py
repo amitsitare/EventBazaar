@@ -217,6 +217,18 @@ def _ensure_tables_exist_sync(conn) -> None:
             );
             """
         )
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS service_unavailable_dates (
+                id SERIAL PRIMARY KEY,
+                service_id INTEGER NOT NULL REFERENCES services(id) ON DELETE CASCADE,
+                blocked_date DATE NOT NULL,
+                reason TEXT,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                UNIQUE (service_id, blocked_date)
+            );
+            """
+        )
 
         # Ensure new columns exist for deployments created before they were added.
         cur.execute(
@@ -262,6 +274,12 @@ def _ensure_tables_exist_sync(conn) -> None:
             """
             CREATE INDEX IF NOT EXISTS idx_reviews_customer_id
             ON reviews (customer_id);
+            """
+        )
+        cur.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_unavailable_service_date
+            ON service_unavailable_dates (service_id, blocked_date);
             """
         )
 
@@ -424,6 +442,18 @@ async def _ensure_tables_exist_async(conn: "psycopg.AsyncConnection") -> None:
             );
             """
         )
+        await cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS service_unavailable_dates (
+                id SERIAL PRIMARY KEY,
+                service_id INTEGER NOT NULL REFERENCES services(id) ON DELETE CASCADE,
+                blocked_date DATE NOT NULL,
+                reason TEXT,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                UNIQUE (service_id, blocked_date)
+            );
+            """
+        )
 
         # Ensure new columns exist for deployments created before they were added.
         await cur.execute(
@@ -469,6 +499,12 @@ async def _ensure_tables_exist_async(conn: "psycopg.AsyncConnection") -> None:
             """
             CREATE INDEX IF NOT EXISTS idx_reviews_customer_id
             ON reviews (customer_id);
+            """
+        )
+        await cur.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_unavailable_service_date
+            ON service_unavailable_dates (service_id, blocked_date);
             """
         )
 

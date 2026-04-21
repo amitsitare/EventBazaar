@@ -105,11 +105,21 @@ export default function Navbar() {
                 {auth.role === 'customer' ? t('navMyBookings') : t('navDashboard')}
               </NavLink>
               {auth.role === 'customer' && (
+                <>
+                  <NavLink
+                    to="/wishlist"
+                    className="hidden sm:inline-flex items-center justify-center text-sm font-semibold text-primary px-4 py-2 rounded-full border border-primary/20 hover:bg-primary/5 transition-colors no-underline"
+                  >
+                    {t('navWishlist')}
+                  </NavLink>
+                </>
+              )}
+              {auth.role === 'provider' && (
                 <NavLink
-                  to="/payments"
+                  to="/provider-payments"
                   className="hidden sm:inline-flex items-center justify-center text-sm font-semibold text-primary px-4 py-2 rounded-full border border-primary/20 hover:bg-primary/5 transition-colors no-underline"
                 >
-                  {t('navPayments')}
+                  {t('navProviderPayments')}
                 </NavLink>
               )}
               <button

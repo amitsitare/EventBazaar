@@ -2,8 +2,11 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { API_BASE, authHeader, getAuth } from '../auth.js';
+import { useLanguage } from '../i18n/LanguageContext.jsx';
+import { isWishlisted, toggleWishlistItem } from '../wishlist.js';
 
 export default function ServiceDetail() {
+  const { t } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
   const [service, setService] = useState(null);
@@ -18,16 +21,21 @@ export default function ServiceDetail() {
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingSuccessOpen, setBookingSuccessOpen] = useState(false);
   const [reviews, setReviews] = useState([]);
+  const [blockedDates, setBlockedDates] = useState([]);
+  const [wishlisted, setWishlisted] = useState(false);
 
   const load = async () => {
-    const [svcRes, itemsRes, reviewsRes] = await Promise.all([
+    const [svcRes, itemsRes, reviewsRes, blockedRes] = await Promise.all([
       axios.get(`${API_BASE}/api/services/${id}`),
       axios.get(`${API_BASE}/api/services/${id}/items/public`).catch(() => ({ data: [] })),
       axios.get(`${API_BASE}/api/services/${id}/reviews`).catch(() => ({ data: [] })),
+      axios.get(`${API_BASE}/api/services/${id}/availability`).catch(() => ({ data: [] })),
     ]);
     setService(svcRes.data);
     setItems(Array.isArray(itemsRes.data) ? itemsRes.data : []);
     setReviews(Array.isArray(reviewsRes.data) ? reviewsRes.data : []);
+    setBlockedDates(Array.isArray(blockedRes.data) ? blockedRes.data.map((b) => b.blocked_date) : []);
+    setWishlisted(isWishlisted(id));
     setItemQuantities({});
   };
   useEffect(() => { load(); }, [id]);
@@ -105,6 +113,7 @@ export default function ServiceDetail() {
   const canPayWithServicePrice = service && service.price != null && !Number.isNaN(Number(service.price));
   const canBook = canPayWithCart || canPayWithServicePrice;
   const formatInr = (value) => `₹${Number(value || 0).toFixed(0)}`;
+  const isBlockedDate = blockedDates.includes(eventDate);
 
   const book = async () => {
     if (bookingLoading) return;
@@ -112,22 +121,26 @@ export default function ServiceDetail() {
 
     const auth = getAuth();
     if (!auth.token || auth.role !== 'customer') {
-      setMessage('Please login as customer to add to cart and book.');
+      setMessage(t('serviceDetailLoginRequired'));
       return;
     }
 
     if (!eventDate) {
-      setMessage('Please select an event date before booking.');
+      setMessage(t('serviceDetailSelectDate'));
+      return;
+    }
+    if (isBlockedDate) {
+      setMessage(t('availabilityDateUnavailable'));
       return;
     }
 
     if (!address || !String(address).trim()) {
-      setMessage('Please enter the service address (venue or full address).');
+      setMessage(t('serviceDetailEnterAddress'));
       return;
     }
 
     if (!quantity || Number(quantity) < 1) {
-      setMessage('Please enter a valid quantity (at least 1).');
+      setMessage(t('serviceDetailInvalidQuantity'));
       return;
     }
 
@@ -138,12 +151,12 @@ export default function ServiceDetail() {
     } else if (canPayWithServicePrice) {
       amountRupees = Number(service.price);
     } else {
-      setMessage('Please add items to cart (select quantities) to book this package, or this service has no fixed price.');
+      setMessage(t('serviceDetailCannotBook'));
       return;
     }
 
     if (amountRupees <= 0) {
-      setMessage('Please add items to cart with quantity to proceed to payment.');
+      setMessage(t('serviceDetailAddItemsToPay'));
       return;
     }
 
@@ -192,7 +205,7 @@ export default function ServiceDetail() {
       setMessage('');
       setBookingSuccessOpen(true);
     } catch (err) {
-      setMessage(err.response?.data?.detail || 'Booking failed');
+      setMessage(err.response?.data?.detail || t('serviceDetailBookingFailed'));
     } finally {
       setBookingLoading(false);
     }
@@ -203,7 +216,7 @@ export default function ServiceDetail() {
       <main className="bg-background-light min-h-screen py-4 md:py-6">
         <div className="max-w-5xl mx-auto px-3 md:px-4">
           <div className="py-10 text-center text-sm text-slate-500">
-            Loading service details...
+            {t('serviceDetailLoading')}
           </div>
         </div>
       </main>
@@ -236,17 +249,17 @@ export default function ServiceDetail() {
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-4 text-white md:p-5">
                     <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.26em] text-white/80 md:text-[11px]">
-                      Service details
+                      {t('serviceDetailBadge')}
                     </p>
                     <h1 className="text-2xl font-black tracking-tight drop-shadow md:text-3xl">
                       {service.name}
                     </h1>
                     <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
                       <span className="rounded-full bg-white/20 px-3 py-1 font-semibold backdrop-blur">
-                        {service.location ? `Available in ${service.location}` : 'Event service'}
+                        {service.location ? t('serviceDetailAvailableIn', { location: service.location }) : t('serviceDetailEventService')}
                       </span>
                       <span className="rounded-full bg-white/20 px-3 py-1 font-semibold backdrop-blur">
-                        {service.price != null ? formatInr(service.price) : 'From items'}
+                        {service.price != null ? formatInr(service.price) : t('serviceDetailFromItems')}
                       </span>
                     </div>
                   </div>
@@ -277,15 +290,15 @@ export default function ServiceDetail() {
                   </div>
                 )}
                 <p className="text-sm leading-relaxed text-slate-600">
-                  {service.description || 'No description provided for this service.'}
+                  {service.description || t('serviceDetailNoDescription')}
                 </p>
                 <div className="rounded-xl border border-amber-100 bg-amber-50/60 p-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-semibold text-amber-800">
-                      ★ {Number(service.avg_rating || 0).toFixed(1)} average rating
+                      ★ {Number(service.avg_rating || 0).toFixed(1)} {t('serviceDetailAverageRating')}
                     </p>
                     <p className="text-xs font-medium text-amber-700">
-                      {Number(service.review_count || 0)} review{Number(service.review_count || 0) === 1 ? '' : 's'}
+                      {t('serviceDetailReviews', { count: Number(service.review_count || 0) })}
                     </p>
                   </div>
                   {reviews.length > 0 && (
@@ -304,14 +317,24 @@ export default function ServiceDetail() {
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3">
                   <p className="font-semibold text-slate-800">
-                    <span className="text-blue-700">{service.price != null ? formatInr(service.price) : 'From items'}</span>
+                    <span className="text-blue-700">{service.price != null ? formatInr(service.price) : t('serviceDetailFromItems')}</span>
                     {service.location && (
                       <span className="ml-1 text-sm text-slate-500"> · {service.location}</span>
                     )}
                   </p>
                   <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                    EventBazaar vendor
+                    {t('serviceDetailVendorTag')}
                   </span>
+                  <button
+                    type="button"
+                    className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-700"
+                    onClick={() => {
+                      toggleWishlistItem(service);
+                      setWishlisted(isWishlisted(service.id));
+                    }}
+                  >
+                    {wishlisted ? t('wishlistRemove') : t('wishlistSave')}
+                  </button>
                 </div>
               </div>
             </div>
@@ -319,13 +342,13 @@ export default function ServiceDetail() {
 
           <div className="lg:col-span-5">
             <div className="h-full rounded-3xl border border-slate-200/80 bg-white p-4 shadow-xl ring-1 ring-slate-100 transition duration-300 hover:shadow-2xl md:p-5 lg:min-h-[520px]">
-              <h2 className="mb-1 text-xl font-bold text-slate-900">Book this service</h2>
+              <h2 className="mb-1 text-xl font-bold text-slate-900">{t('serviceDetailBookTitle')}</h2>
               <p className="mb-3 text-sm text-slate-500">
-                  Secure online payment. You&apos;ll get a confirmation instantly after booking.
+                  {t('serviceDetailBookSubtitle')}
               </p>
                 {!isLoggedIn && (
                   <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-                    Login as customer is required to add items to cart and book.
+                    {t('serviceDetailLoginHint')}
                   </div>
                 )}
                 {message && (
@@ -336,7 +359,7 @@ export default function ServiceDetail() {
 
                 <div className="mb-3">
                   <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                    Event Date
+                    {t('serviceDetailEventDate')}
                   </label>
                   <input
                     type="date"
@@ -345,11 +368,12 @@ export default function ServiceDetail() {
                     onChange={(e) => setEventDate(e.target.value)}
                     required
                   />
+                  {isBlockedDate && <p className="mt-1 text-xs text-rose-600">{t('availabilityDateUnavailable')}</p>}
                 </div>
 
                 <div className="mb-3">
                   <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                    Quantity
+                    {t('serviceDetailQuantity')}
                   </label>
                   <input
                     type="number"
@@ -363,21 +387,21 @@ export default function ServiceDetail() {
 
                 <div className="mb-3">
                   <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                    Service Address <span className="text-rose-500">*</span>
+                    {t('serviceDetailAddress')} <span className="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
                     className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Venue or full address"
+                    placeholder={t('serviceDetailAddressPlaceholder')}
                     required
                   />
                 </div>
 
                 <div className="mb-3">
                   <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                    Duration (hours, optional)
+                    {t('serviceDetailDuration')}
                   </label>
                   <input
                     type="number"
@@ -390,7 +414,7 @@ export default function ServiceDetail() {
 
                 <div className="mb-4">
                   <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                    Notes
+                    {t('serviceDetailNotes')}
                   </label>
                   <textarea
                     className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
@@ -402,12 +426,12 @@ export default function ServiceDetail() {
 
                 {canPayWithCart && (
                   <p className="mb-2 text-sm font-semibold text-blue-700">
-                    Package total: {formatInr(selectedItemsTotal)}
+                    {t('serviceDetailPackageTotal')}: {formatInr(selectedItemsTotal)}
                   </p>
                 )}
                 {!canBook && items.length > 0 && (
                   <p className="mb-2 text-sm text-slate-500">
-                    Add items below with quantity to book this package.
+                    {t('serviceDetailAddItemsBelow')}
                   </p>
                 )}
                 <button
@@ -416,12 +440,12 @@ export default function ServiceDetail() {
                   disabled={bookingLoading || !canBook || !isCustomer}
                 >
                   {bookingLoading
-                    ? 'Processing payment...'
+                    ? t('serviceDetailProcessing')
                     : canPayWithCart
                       ? `Book package — ₹${selectedItemsTotal.toFixed(0)}`
                       : canPayWithServicePrice
                         ? `Book now — ${formatInr(service.price)}`
-                        : 'Add items to book'}
+                        : t('serviceDetailAddItemsButton')}
                 </button>
             </div>
           </div>
@@ -433,7 +457,7 @@ export default function ServiceDetail() {
               <div className="p-5 md:p-6">
                 <h3 className="mb-1 flex items-center gap-2 text-lg font-bold text-slate-900">
                   <span className="material-symbols-outlined text-blue-600">inventory_2</span>
-                  Add items as per your requirement
+                  {t('serviceDetailItemsTitle')}
                 </h3>
                 {!isLoggedIn && (
                   <p className="mb-2 text-sm text-amber-700">

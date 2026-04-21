@@ -9,7 +9,7 @@ from ..config import settings
 from .auth import get_current_user
 from ..db import get_db_conn
 from ..schemas import BookingCreate
-from .bookings import create_confirmed_booking_and_notify
+from .bookings import create_confirmed_booking_and_notify, ensure_service_date_available
 
 logger = logging.getLogger(__name__)
 
@@ -177,6 +177,7 @@ async def verify_signature(body: VerifyRequest, payload=Depends(get_current_user
                 duration_hours=body.duration_hours,
                 paid_amount=amount_rupees,
             )
+            await ensure_service_date_available(conn, booking_data.service_id, booking_data.event_date)
             booking = await create_confirmed_booking_and_notify(conn, user_id, booking_data)
 
             await cur.execute(

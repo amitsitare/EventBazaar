@@ -5,7 +5,15 @@ import os
 from uuid import uuid4
 
 from ..db import get_db_conn
-from ..schemas import ServiceCreate, ServicePublic, ServiceItemCreate, ServiceItemPublic, ReviewPublic
+from ..schemas import (
+    ServiceCreate,
+    ServicePublic,
+    ServiceItemCreate,
+    ServiceItemPublic,
+    ReviewPublic,
+    ServiceUnavailableDateCreate,
+    ServiceUnavailableDatePublic,
+)
 from .auth import get_current_user
 
 
@@ -290,6 +298,91 @@ async def _assert_provider_owns_service(service_id: int, provider_id: int, conn)
             raise HTTPException(status_code=404, detail="Service not found")
         if int(row[0]) != int(provider_id):
             raise HTTPException(status_code=403, detail="Not owner")
+
+
+@router.get("/{service_id}/availability", response_model=List[ServiceUnavailableDatePublic])
+async def list_service_unavailable_dates(service_id: int, conn=Depends(get_db_conn)):
+    async with conn.cursor() as cur:
+        await cur.execute("SELECT id FROM services WHERE id=%s", (service_id,))
+        if not await cur.fetchone():
+            raise HTTPException(status_code=404, detail="Service not found")
+        await cur.execute(
+            """
+            SELECT id, service_id, blocked_date, reason, created_at
+            FROM service_unavailable_dates
+            WHERE service_id = %s
+            ORDER BY blocked_date ASC
+            """,
+            (service_id,),
+        )
+        rows = await cur.fetchall()
+    return [
+        ServiceUnavailableDatePublic(
+            id=r[0],
+            service_id=r[1],
+            blocked_date=r[2],
+            reason=r[3],
+            created_at=r[4].isoformat() if r[4] else "",
+        )
+        for r in rows
+    ]
+
+
+@router.post("/{service_id}/availability", response_model=ServiceUnavailableDatePublic)
+async def add_service_unavailable_date(
+    service_id: int,
+    data: ServiceUnavailableDateCreate,
+    payload=Depends(get_current_user),
+    conn=Depends(get_db_conn),
+):
+    if payload.get("role") != "provider":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Providers only")
+    provider_id = int(payload["sub"])
+    await _assert_provider_owns_service(service_id, provider_id, conn)
+    reason = (data.reason or "").strip() or None
+    async with conn.cursor() as cur:
+        await cur.execute(
+            """
+            INSERT INTO service_unavailable_dates (service_id, blocked_date, reason)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (service_id, blocked_date) DO UPDATE
+            SET reason = EXCLUDED.reason
+            RETURNING id, service_id, blocked_date, reason, created_at
+            """,
+            (service_id, data.blocked_date, reason),
+        )
+        row = await cur.fetchone()
+        await conn.commit()
+    return ServiceUnavailableDatePublic(
+        id=row[0],
+        service_id=row[1],
+        blocked_date=row[2],
+        reason=row[3],
+        created_at=row[4].isoformat() if row[4] else "",
+    )
+
+
+@router.delete("/{service_id}/availability/{blocked_id}")
+async def delete_service_unavailable_date(
+    service_id: int,
+    blocked_id: int,
+    payload=Depends(get_current_user),
+    conn=Depends(get_db_conn),
+):
+    if payload.get("role") != "provider":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Providers only")
+    provider_id = int(payload["sub"])
+    await _assert_provider_owns_service(service_id, provider_id, conn)
+    async with conn.cursor() as cur:
+        await cur.execute(
+            "DELETE FROM service_unavailable_dates WHERE id=%s AND service_id=%s RETURNING id",
+            (blocked_id, service_id),
+        )
+        row = await cur.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Blocked date not found")
+        await conn.commit()
+    return {"status": "deleted"}
 
 
 @router.get("/{service_id}/items/public", response_model=List[ServiceItemPublic])

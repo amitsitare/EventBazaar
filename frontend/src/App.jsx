@@ -14,6 +14,10 @@ import MyBookings from './pages/MyBookings.jsx';
 import ContactUs from './pages/ContactUs.jsx';
 import ServicesOverview from './pages/ServicesOverview.jsx';
 import PaymentLedger from './pages/PaymentLedger.jsx';
+import Wishlist from './pages/Wishlist.jsx';
+import ProviderPayments from './pages/ProviderPayments.jsx';
+import ProviderBookings from './pages/ProviderBookings.jsx';
+import ProviderCalendar from './pages/ProviderCalendar.jsx';
 import { getAuth } from './auth.js';
 
 function PrivateRoute({ children, role }) {
@@ -48,6 +52,18 @@ export default function App() {
           } />
           <Route path="/payments" element={
             <PrivateRoute role="customer"><PaymentLedger /></PrivateRoute>
+          } />
+          <Route path="/wishlist" element={
+            <PrivateRoute role="customer"><Wishlist /></PrivateRoute>
+          } />
+          <Route path="/provider-payments" element={
+            <PrivateRoute role="provider"><ProviderPayments /></PrivateRoute>
+          } />
+          <Route path="/provider-bookings" element={
+            <PrivateRoute role="provider"><ProviderBookings /></PrivateRoute>
+          } />
+          <Route path="/provider-calendar" element={
+            <PrivateRoute role="provider"><ProviderCalendar /></PrivateRoute>
           } />
         </Routes>
       </main>

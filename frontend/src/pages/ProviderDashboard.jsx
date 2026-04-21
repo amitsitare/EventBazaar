@@ -72,6 +72,10 @@ export default function ProviderDashboard() {
   const [showForm, setShowForm] = useState(false);
   const [providerPayments, setProviderPayments] = useState([]);
   const [paymentsOpen, setPaymentsOpen] = useState(false);
+  const [availabilityServiceId, setAvailabilityServiceId] = useState('');
+  const [blockedDate, setBlockedDate] = useState('');
+  const [blockedReason, setBlockedReason] = useState('');
+  const [blockedDates, setBlockedDates] = useState([]);
 
   const load = async () => {
     setLoading(true);
@@ -135,6 +139,22 @@ export default function ProviderDashboard() {
   useEffect(() => {
     load();
   }, []);
+
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      if (!availabilityServiceId) {
+        setBlockedDates([]);
+        return;
+      }
+      try {
+        const { data } = await axios.get(`${API_BASE}/api/services/${availabilityServiceId}/availability`, { headers: authHeader() });
+        setBlockedDates(Array.isArray(data) ? data : []);
+      } catch {
+        setBlockedDates([]);
+      }
+    };
+    fetchAvailability();
+  }, [availabilityServiceId]);
 
   const serviceById = useMemo(() => {
     const map = new Map();
@@ -292,6 +312,35 @@ export default function ProviderDashboard() {
     }
   };
 
+  const addBlockedDate = async () => {
+    if (!availabilityServiceId || !blockedDate) return;
+    setError('');
+    try {
+      await axios.post(
+        `${API_BASE}/api/services/${availabilityServiceId}/availability`,
+        { blocked_date: blockedDate, reason: blockedReason || null },
+        { headers: authHeader() }
+      );
+      const { data } = await axios.get(`${API_BASE}/api/services/${availabilityServiceId}/availability`, { headers: authHeader() });
+      setBlockedDates(Array.isArray(data) ? data : []);
+      setBlockedDate('');
+      setBlockedReason('');
+      setSuccess('Blocked date added.');
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Failed to add blocked date');
+    }
+  };
+
+  const removeBlockedDate = async (rowId) => {
+    try {
+      await axios.delete(`${API_BASE}/api/services/${availabilityServiceId}/availability/${rowId}`, { headers: authHeader() });
+      setBlockedDates((prev) => prev.filter((row) => Number(row.id) !== Number(rowId)));
+      setSuccess('Blocked date removed.');
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Failed to remove blocked date');
+    }
+  };
+
   return (
     <main className="bg-background-light min-h-screen py-6 px-3 md:px-4 text-slate-900">
       <div className="max-w-7xl mx-auto space-y-5">
@@ -325,31 +374,33 @@ export default function ProviderDashboard() {
           )}
         </AnimatePresence>
 
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-          <div className="bg-white rounded-2xl border border-slate-100 p-4 lg:col-span-2">
-            <div className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Revenue</div>
-            <div className="text-2xl font-black mb-1">{currency(stats.revenue)}</div>
-            <p className="text-[11px] text-slate-500 mb-3">
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="rounded-3xl border border-emerald-200/70 bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-5 shadow-sm lg:col-span-2">
+            <div className="inline-flex rounded-full border border-emerald-200 bg-emerald-100/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-700 mb-2">
+              Revenue
+            </div>
+            <div className="text-3xl font-black text-slate-900 mb-1">{currency(stats.revenue)}</div>
+            <p className="text-[11px] text-slate-600 mb-3">
               From confirmed bookings (uses amount actually paid when recorded; otherwise service price × quantity).
             </p>
-            <div className="h-40 rounded-xl bg-gradient-to-br from-amber-50 to-white border border-amber-100 p-3 flex flex-col justify-end">
+            <div className="h-40 rounded-2xl bg-gradient-to-br from-emerald-100/60 via-white to-teal-100/60 border border-emerald-200/60 p-3 flex flex-col justify-end">
               <div className="h-16 flex items-end gap-1.5">
                 {[25, 35, 30, 55, 48, 70].map((h, i) => (
-                  <div key={i} className="flex-1 bg-primary/70 rounded-t-md" style={{ height: `${h}%` }} />
+                  <div key={i} className="flex-1 bg-gradient-to-t from-emerald-500 to-teal-400 rounded-t-md" style={{ height: `${h}%` }} />
                 ))}
               </div>
-              <div className="mt-2 text-[11px] text-slate-500">Last 6 months snapshot</div>
+              <div className="mt-2 text-[11px] text-slate-600 font-medium">Last 6 months snapshot</div>
             </div>
 
             <div className="mt-3 border-t border-slate-100 pt-3">
               <div className="flex items-center justify-between mb-2.5">
-                <div className="text-[11px] font-bold uppercase tracking-widest text-slate-400">Quick Actions</div>
-                <div className="text-[10px] text-slate-400">One-tap shortcuts</div>
+                <div className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Quick Actions</div>
+                <div className="text-[10px] text-slate-500">One-tap shortcuts</div>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
                 {[
                   { label: 'New Service', hint: 'Create listing', icon: Plus, onClick: openForm, accent: 'bg-amber-50 border-amber-200 text-amber-700' },
-                  { label: 'View Calendar', hint: 'Check events', icon: Calendar, onClick: () => {}, accent: 'bg-blue-50 border-blue-200 text-blue-700' },
+                  { label: 'View Calendar', hint: 'Check events', icon: Calendar, onClick: () => navigate('/provider-calendar'), accent: 'bg-blue-50 border-blue-200 text-blue-700' },
                   { label: 'Messages', hint: 'Open inbox', icon: MessageSquare, onClick: () => {}, accent: 'bg-violet-50 border-violet-200 text-violet-700' },
                   { label: 'Analytics', hint: 'Track growth', icon: TrendingUp, onClick: () => {}, accent: 'bg-emerald-50 border-emerald-200 text-emerald-700' },
                 ].map((action) => (
@@ -357,7 +408,7 @@ export default function ProviderDashboard() {
                     key={action.label}
                     type="button"
                     onClick={action.onClick}
-                    className="group rounded-xl border border-slate-200 bg-white p-2.5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-slate-200/70 hover:border-slate-300 hover:bg-slate-50/80"
+                    className="group rounded-2xl border border-slate-200/90 bg-white/90 p-2.5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-slate-200/70 hover:border-slate-300"
                   >
                     <div className="flex items-start gap-2 w-full">
                       <div className={`mt-0.5 size-7 rounded-lg border flex items-center justify-center transition-transform duration-200 group-hover:scale-105 ${action.accent}`}>
@@ -374,18 +425,23 @@ export default function ProviderDashboard() {
             </div>
           </div>
           <div className="grid grid-cols-1 gap-3">
-            <div className="bg-white rounded-2xl border border-slate-100 p-4">
-              <div className="text-[11px] uppercase text-slate-400 font-bold">Total Views</div>
-              <div className="text-xl font-black mt-1">{stats.totalViews.toLocaleString()}</div>
+            <div className="rounded-2xl border border-sky-200/70 bg-gradient-to-br from-sky-50 to-blue-50 p-4 shadow-sm">
+              <div className="text-[11px] uppercase text-sky-700 font-bold tracking-wide">Total Views</div>
+              <div className="text-2xl font-black mt-1 text-slate-900">{stats.totalViews.toLocaleString()}</div>
             </div>
-            <div className="bg-white rounded-2xl border border-slate-100 p-4">
-              <div className="text-[11px] uppercase text-slate-400 font-bold">Active Bookings</div>
-              <div className="text-xl font-black mt-1">{stats.activeBookings}</div>
+            <div className="rounded-2xl border border-violet-200/70 bg-gradient-to-br from-violet-50 to-fuchsia-50 p-4 shadow-sm">
+              <div className="text-[11px] uppercase text-violet-700 font-bold tracking-wide">Active Bookings</div>
+              <div className="text-2xl font-black mt-1 text-slate-900">{stats.activeBookings}</div>
             </div>
-            <div className="bg-white rounded-2xl border border-slate-100 p-4">
-              <div className="text-[11px] uppercase text-slate-400 font-bold">Total Bookings</div>
-              <div className="text-xl font-black mt-1">{stats.totalBookings}</div>
-            </div>
+            <button
+              type="button"
+              onClick={() => navigate('/provider-bookings')}
+              className="w-full text-left rounded-2xl border border-amber-200/70 bg-gradient-to-br from-amber-50 to-orange-50 p-4 shadow-sm hover:-translate-y-0.5 transition"
+            >
+              <div className="text-[11px] uppercase text-amber-700 font-bold tracking-wide">Total Bookings</div>
+              <div className="text-2xl font-black mt-1 text-slate-900">{stats.totalBookings}</div>
+              <div className="mt-2 text-xs font-semibold text-amber-800">View all</div>
+            </button>
           </div>
         </section>
 
@@ -421,6 +477,15 @@ export default function ProviderDashboard() {
                 className="overflow-hidden border-t border-slate-100"
               >
                 <div className="p-4 pt-0">
+                  <div className="mb-3 flex justify-end">
+                    <button
+                      type="button"
+                      className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700"
+                      onClick={() => navigate('/provider-payments')}
+                    >
+                      Open full payments page
+                    </button>
+                  </div>
                   {providerPayments.length === 0 ? (
                     <p className="text-sm text-slate-500 py-4">No payment records yet for your services.</p>
                   ) : (
@@ -478,6 +543,82 @@ export default function ProviderDashboard() {
               </motion.div>
             )}
           </AnimatePresence>
+        </section>
+
+        <section className="bg-white rounded-2xl border border-slate-100 p-4">
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <h2 className="text-lg font-black">Availability calendar</h2>
+            <span className="text-xs text-slate-500">Block unavailable dates per service</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+            <select
+              value={availabilityServiceId}
+              onChange={(e) => setAvailabilityServiceId(e.target.value)}
+              className="rounded-lg border border-slate-200 px-3 py-2 text-sm md:col-span-2"
+            >
+              <option value="">Select service</option>
+              {services.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+            <input
+              type="date"
+              value={blockedDate}
+              onChange={(e) => setBlockedDate(e.target.value)}
+              className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+            />
+            <button
+              type="button"
+              onClick={addBlockedDate}
+              className="rounded-lg bg-primary px-3 py-2 text-sm font-bold text-black"
+            >
+              Add blocked date
+            </button>
+          </div>
+          <input
+            type="text"
+            value={blockedReason}
+            onChange={(e) => setBlockedReason(e.target.value)}
+            className="mt-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+            placeholder="Reason (optional)"
+          />
+          <div className="mt-3 overflow-x-auto rounded-xl border border-slate-100">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="bg-slate-50 text-slate-500 uppercase tracking-wide text-[10px]">
+                  <th className="px-3 py-2 font-bold">Date</th>
+                  <th className="px-3 py-2 font-bold">Reason</th>
+                  <th className="px-3 py-2 font-bold">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {blockedDates.map((row) => (
+                  <tr key={row.id}>
+                    <td className="px-3 py-2">{formatDate(row.blocked_date)}</td>
+                    <td className="px-3 py-2">{row.reason || '-'}</td>
+                    <td className="px-3 py-2">
+                      <button
+                        type="button"
+                        onClick={() => removeBlockedDate(row.id)}
+                        className="rounded-md border border-rose-300 px-2 py-1 text-[11px] font-semibold text-rose-700"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {blockedDates.length === 0 && (
+                  <tr>
+                    <td colSpan={3} className="px-3 py-3 text-slate-500">
+                      No blocked dates configured.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </section>
 
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-4">

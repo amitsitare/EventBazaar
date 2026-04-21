@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { API_BASE, authHeader } from '../auth.js';
+import { useLanguage } from '../i18n/LanguageContext.jsx';
 
 export default function PaymentLedger() {
+  const { t } = useLanguage();
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isAdminView, setIsAdminView] = useState(false);
@@ -50,19 +52,19 @@ export default function PaymentLedger() {
       <div className="max-w-6xl mx-auto px-4">
         <header className="mb-6">
           <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-primary mb-1">
-            Transactions
+            {t('paymentsBadge')}
           </p>
           <h1 className="text-2xl md:text-3xl font-black tracking-tight text-primary">
-            Payment Ledger
+            {t('paymentsTitle')}
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            {isAdminView ? 'Admin view of all customer payments.' : 'Your booking payments and verification status.'}
+            {isAdminView ? t('paymentsAdminSubtitle') : t('paymentsUserSubtitle')}
           </p>
         </header>
 
         <section className="rounded-3xl bg-white border border-slate-100 shadow-sm p-4 md:p-6">
-          {loading && <p className="text-sm text-slate-500">Loading payments...</p>}
-          {!loading && rows.length === 0 && <p className="text-sm text-slate-500">No payment records found.</p>}
+          {loading && <p className="text-sm text-slate-500">{t('paymentsLoading')}</p>}
+          {!loading && rows.length === 0 && <p className="text-sm text-slate-500">{t('paymentsEmpty')}</p>}
 
           {!loading && rows.length > 0 && (
             <div className="overflow-x-auto">
@@ -70,14 +72,14 @@ export default function PaymentLedger() {
                 <thead>
                   <tr className="border-b border-slate-200 text-slate-500">
                     <th className="text-left py-2 pr-3">ID</th>
-                    <th className="text-left py-2 pr-3">Status</th>
-                    <th className="text-left py-2 pr-3">Amount</th>
-                    <th className="text-left py-2 pr-3">Service</th>
-                    {isAdminView && <th className="text-left py-2 pr-3">Customer</th>}
-                    <th className="text-left py-2 pr-3">Booking</th>
-                    <th className="text-left py-2 pr-3">Order ID</th>
-                    <th className="text-left py-2 pr-3">Payment ID</th>
-                    <th className="text-left py-2 pr-3">Created</th>
+                    <th className="text-left py-2 pr-3">{t('paymentsStatus')}</th>
+                    <th className="text-left py-2 pr-3">{t('paymentsAmount')}</th>
+                    <th className="text-left py-2 pr-3">{t('paymentsService')}</th>
+                    {isAdminView && <th className="text-left py-2 pr-3">{t('paymentsCustomer')}</th>}
+                    <th className="text-left py-2 pr-3">{t('paymentsBooking')}</th>
+                    <th className="text-left py-2 pr-3">{t('paymentsOrderId')}</th>
+                    <th className="text-left py-2 pr-3">{t('paymentsPaymentId')}</th>
+                    <th className="text-left py-2 pr-3">{t('paymentsCreated')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -90,7 +92,7 @@ export default function PaymentLedger() {
                         </span>
                       </td>
                       <td className="py-2 pr-3">{formatInr(p.amount)}</td>
-                      <td className="py-2 pr-3">{p.service_name || `Service #${p.service_id}`}</td>
+                      <td className="py-2 pr-3">{p.service_name || `${t('paymentsServiceLabel')} #${p.service_id}`}</td>
                       {isAdminView && (
                         <td className="py-2 pr-3">
                           <div>{p.customer_name || '-'}</div>

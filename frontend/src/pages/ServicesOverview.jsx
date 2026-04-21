@@ -14,8 +14,9 @@ import {
   ShieldCheck,
   CalendarRange,
 } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext.jsx';
 
-const categories = [
+const categoriesRaw = [
   {
     title: 'Catering & banquets',
     desc: 'Menus from intimate gatherings to grand receptions — chefs, live counters, and curated tastings.',
@@ -60,7 +61,7 @@ const categories = [
   },
 ];
 
-const pillars = [
+const pillarsRaw = [
   {
     title: 'Vetted partners',
     body: 'Browse profiles, packages, and real reviews before you shortlist.',
@@ -79,6 +80,20 @@ const pillars = [
 ];
 
 export default function ServicesOverview() {
+  const { t } = useLanguage();
+  const categories = [
+    { ...categoriesRaw[0], title: t('servicesOverviewCat1Title'), desc: t('servicesOverviewCat1Desc') },
+    { ...categoriesRaw[1], title: t('servicesOverviewCat2Title'), desc: t('servicesOverviewCat2Desc') },
+    { ...categoriesRaw[2], title: t('servicesOverviewCat3Title'), desc: t('servicesOverviewCat3Desc') },
+    { ...categoriesRaw[3], title: t('servicesOverviewCat4Title'), desc: t('servicesOverviewCat4Desc') },
+    { ...categoriesRaw[4], title: t('servicesOverviewCat5Title'), desc: t('servicesOverviewCat5Desc') },
+    { ...categoriesRaw[5], title: t('servicesOverviewCat6Title'), desc: t('servicesOverviewCat6Desc') },
+  ];
+  const pillars = [
+    { ...pillarsRaw[0], title: t('servicesOverviewPillar1Title'), body: t('servicesOverviewPillar1Body') },
+    { ...pillarsRaw[1], title: t('servicesOverviewPillar2Title'), body: t('servicesOverviewPillar2Body') },
+    { ...pillarsRaw[2], title: t('servicesOverviewPillar3Title'), body: t('servicesOverviewPillar3Body') },
+  ];
   return (
     <main className="min-h-screen bg-gradient-to-b from-amber-50/40 via-white to-slate-50 py-6 md:py-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -99,31 +114,30 @@ export default function ServicesOverview() {
           <div className="relative max-w-3xl space-y-5">
             <p className="inline-flex items-center gap-2 rounded-full border border-amber-200/80 bg-amber-50/90 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.22em] text-amber-800">
               <Sparkles className="size-3.5 text-amber-600" strokeWidth={2.5} />
-              What we cover
+              {t('servicesOverviewBadge')}
             </p>
             <h1 className="text-3xl font-black tracking-tight text-slate-900 md:text-5xl md:leading-[1.08]">
-              Every service layer for{' '}
+              {t('servicesOverviewHeroTitlePrefix')}{' '}
               <span className="bg-gradient-to-r from-amber-600 via-primary to-amber-500 bg-clip-text text-transparent">
-                unforgettable events
+                {t('servicesOverviewHeroTitleHighlight')}
               </span>
             </h1>
             <p className="text-base leading-relaxed text-slate-600 md:text-lg">
-              EventBazaar brings together specialists across food, visuals, sound, space, and sweets — so
-              you can imagine the day, then find the right vendors in one marketplace.
+              {t('servicesOverviewHeroBody')}
             </p>
             <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center">
               <Link
                 to="/services"
                 className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-8 py-3.5 text-sm font-bold text-background-dark shadow-lg shadow-amber-200/60 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-amber-300/50"
               >
-                Find vendors
+                {t('servicesOverviewFindVendors')}
                 <ArrowRight className="size-4" strokeWidth={2.5} />
               </Link>
               <Link
                 to="/contact-us"
                 className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 bg-white px-8 py-3.5 text-sm font-bold text-slate-700 transition hover:border-primary/40 hover:text-primary"
               >
-                Talk to us
+                {t('servicesOverviewTalkToUs')}
               </Link>
             </div>
           </div>
@@ -138,10 +152,10 @@ export default function ServicesOverview() {
           <div className="mb-8 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="text-2xl font-black tracking-tight text-slate-900 md:text-3xl">
-                Explore categories
+                {t('servicesOverviewExploreCategories')}
               </h2>
               <p className="mt-1 max-w-xl text-sm text-slate-500">
-                Each tile is a doorway into real listings — filter, compare, and book when you are ready.
+                {t('servicesOverviewExploreSubtitle')}
               </p>
             </div>
           </div>
@@ -167,7 +181,7 @@ export default function ServicesOverview() {
                     to="/services"
                     className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-amber-800 transition group-hover:gap-2"
                   >
-                    Browse marketplace
+                    {t('servicesOverviewBrowseMarketplace')}
                     <ArrowRight className="size-4" />
                   </Link>
                 </motion.article>
@@ -185,10 +199,10 @@ export default function ServicesOverview() {
         >
           <div className="rounded-[2rem] border border-slate-200/80 bg-white/95 p-8 shadow-sm md:p-10 md:rounded-[2.5rem]">
             <h2 className="text-center text-2xl font-black tracking-tight text-slate-900 md:text-3xl">
-              Why hosts choose EventBazaar
+              {t('servicesOverviewWhyTitle')}
             </h2>
             <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-slate-500">
-              A calmer path from inspiration to booking — without sacrificing choice or quality.
+              {t('servicesOverviewWhySubtitle')}
             </p>
             <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
               {pillars.map((p) => {
@@ -224,17 +238,16 @@ export default function ServicesOverview() {
             />
             <div className="relative mx-auto max-w-2xl space-y-5">
               <h2 className="text-2xl font-black tracking-tight text-white md:text-3xl">
-                Ready to assemble your dream team?
+                {t('servicesOverviewCtaTitle')}
               </h2>
               <p className="text-sm text-white/65 md:text-base">
-                Jump into the vendor directory, refine by budget and style, and message the ones that feel
-                right.
+                {t('servicesOverviewCtaBody')}
               </p>
               <Link
                 to="/services"
                 className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-10 py-4 text-sm font-black text-background-dark shadow-xl shadow-primary/25 transition hover:-translate-y-0.5 hover:shadow-primary/40"
               >
-                Open Find Vendors
+                {t('servicesOverviewOpenFindVendors')}
                 <ArrowRight className="size-4" strokeWidth={2.5} />
               </Link>
             </div>

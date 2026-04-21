@@ -18,7 +18,23 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
+async def ensure_service_date_available(conn, service_id: int, event_date: date) -> None:
+    async with conn.cursor() as cur:
+        await cur.execute(
+            """
+            SELECT id
+            FROM service_unavailable_dates
+            WHERE service_id = %s AND blocked_date = %s
+            LIMIT 1
+            """,
+            (service_id, event_date),
+        )
+        if await cur.fetchone():
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Selected date is unavailable for this service")
+
+
 async def create_confirmed_booking_and_notify(conn, customer_id: int, data: BookingCreate) -> BookingPublic:
+    await ensure_service_date_available(conn, data.service_id, data.event_date)
     async with conn.cursor() as cur:
         await cur.execute(
             """

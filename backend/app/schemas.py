@@ -79,6 +79,19 @@ class ServiceItemPublic(ServiceItemBase):
     service_id: int
 
 
+class ServiceUnavailableDateCreate(BaseModel):
+    blocked_date: date
+    reason: Optional[str] = None
+
+
+class ServiceUnavailableDatePublic(BaseModel):
+    id: int
+    service_id: int
+    blocked_date: date
+    reason: Optional[str] = None
+    created_at: str
+
+
 class BookingBase(BaseModel):
     service_id: int
     event_date: date

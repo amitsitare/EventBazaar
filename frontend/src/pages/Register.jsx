@@ -17,8 +17,10 @@ import {
   Map as MapIcon,
 } from 'lucide-react';
 import { API_BASE } from '../auth.js';
+import { useLanguage } from '../i18n/LanguageContext.jsx';
 
 export default function Register() {
+  const { t } = useLanguage();
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -78,11 +80,11 @@ export default function Register() {
       const loc = await getLocation();
       const payload = loc ? { ...form, ...loc } : { ...form };
       await axios.post(`${API_BASE}/api/auth/register`, payload);
-      setSuccess('Registration successful. Redirecting to login...');
+      setSuccess(t('registerSuccess'));
       setTimeout(() => navigate('/login'), 1200);
     } catch (err) {
       const serverMsg = err.response?.data?.detail;
-      setError(serverMsg || 'Registration failed');
+      setError(serverMsg || t('registerFailed'));
     } finally {
       setLoading(false);
     }
@@ -124,7 +126,7 @@ export default function Register() {
               className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.25em] text-primary"
             >
               <Sparkles className="size-3" />
-              Join the Bazaar
+              {t('registerBadge')}
             </motion.div>
             <motion.h1 
               initial={{ opacity: 0, x: -20 }}
@@ -132,8 +134,8 @@ export default function Register() {
               transition={{ delay: 0.1 }}
               className="text-5xl font-black tracking-tighter text-slate-900 leading-[0.95]"
             >
-              Start Your <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-amber-500 to-primary">Journey.</span>
+              {t('registerStartYour')} <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-amber-500 to-primary">{t('registerJourney')}</span>
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, x: -20 }}
@@ -141,7 +143,7 @@ export default function Register() {
               transition={{ delay: 0.2 }}
               className="text-base text-slate-500 font-medium leading-relaxed"
             >
-              Whether you're planning a dream event or offering world-class services, you're in the right place.
+              {t('registerLead')}
             </motion.p>
             
             <motion.div 
@@ -151,10 +153,10 @@ export default function Register() {
               className="space-y-4"
             >
               {[
-                'Verified Professionals',
-                'Secure Payments',
-                'Real-time Bookings',
-                '24/7 Support'
+                t('registerFeature1'),
+                t('registerFeature2'),
+                t('registerFeature3'),
+                t('registerFeature4')
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3 text-sm font-bold text-slate-700">
                   <div className="size-5 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center">
@@ -173,8 +175,8 @@ export default function Register() {
             className="lg:col-span-8 bg-white rounded-[2rem] border border-slate-100 shadow-xl p-6 md:p-10"
           >
             <div className="text-center lg:text-left mb-7 space-y-2">
-              <h2 className="text-2xl font-black tracking-tight text-slate-900">Create Account</h2>
-              <p className="text-sm text-slate-500 font-medium">Join thousands of hosts and vendors today.</p>
+              <h2 className="text-2xl font-black tracking-tight text-slate-900">{t('registerCreateAccount')}</h2>
+              <p className="text-sm text-slate-500 font-medium">{t('registerJoinToday')}</p>
             </div>
 
             {/* Role Selection */}
@@ -189,7 +191,7 @@ export default function Register() {
                 }`}
               >
                 <Users className="size-5" />
-                <span className="text-xs font-black uppercase tracking-widest">Customer</span>
+                <span className="text-xs font-black uppercase tracking-widest">{t('registerCustomer')}</span>
               </button>
               <button
                 type="button"
@@ -201,7 +203,7 @@ export default function Register() {
                 }`}
               >
                 <Store className="size-5" />
-                <span className="text-xs font-black uppercase tracking-widest">Vendor</span>
+                <span className="text-xs font-black uppercase tracking-widest">{t('registerVendor')}</span>
               </button>
             </div>
 
@@ -232,7 +234,7 @@ export default function Register() {
             <form onSubmit={onSubmit} className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Full Name</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">{t('registerFullName')}</label>
                   <div className="relative">
                     <User className="absolute left-5 top-1/2 -translate-y-1/2 size-4 text-slate-300" />
                     <input
@@ -247,7 +249,7 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Email Address</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">{t('registerEmail')}</label>
                   <div className="relative">
                     <Mail className="absolute left-5 top-1/2 -translate-y-1/2 size-4 text-slate-300" />
                     <input
@@ -263,7 +265,7 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Mobile Number</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">{t('registerMobile')}</label>
                   <div className="relative">
                     <Phone className="absolute left-5 top-1/2 -translate-y-1/2 size-4 text-slate-300" />
                     <input
@@ -273,14 +275,14 @@ export default function Register() {
                       name="mobile"
                       value={form.mobile}
                       onChange={onChange}
-                      placeholder="10-digit number"
+                      placeholder={t('registerMobilePlaceholder')}
                       className="w-full bg-slate-50 border border-slate-100 rounded-2xl pl-14 pr-6 py-3.5 text-slate-900 font-bold focus:ring-4 focus:ring-primary/20 transition-all outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Location / City</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">{t('registerLocation')}</label>
                   <div className="relative">
                     <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 size-4 text-slate-300" />
                     <input
@@ -294,7 +296,7 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Password</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">{t('registerPassword')}</label>
                   <div className="relative">
                     <Lock className="absolute left-5 top-1/2 -translate-y-1/2 size-4 text-slate-300" />
                     <input
@@ -316,24 +318,24 @@ export default function Register() {
                   disabled={loading}
                   className="w-full bg-primary text-white font-black py-3.5 rounded-2xl shadow-lg hover:scale-[1.01] transition-all disabled:opacity-50 flex items-center justify-center gap-2 group"
                 >
-                  {loading ? 'Creating Account...' : 'Create Account'}
+                  {loading ? t('registerCreating') : t('registerCreateAccount')}
                   {!loading && <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />}
                 </button>
                 
                 <div className="flex items-center justify-center gap-2 text-xs font-bold text-slate-400">
                   <MapIcon className="size-3" />
-                  Location access is optional during signup.
+                  {t('registerLocationOptional')}
                 </div>
               </div>
 
               <div className="pt-4 text-center">
                 <p className="text-sm font-bold text-slate-500">
-                  Already have an account?{' '}
+                  {t('registerAlready')}{' '}
                   <Link
                     to="/login"
                     className="inline-flex items-center justify-center rounded-xl border border-primary/30 bg-primary/10 px-3 py-1.5 text-primary hover:bg-primary/15"
                   >
-                    Sign In
+                    {t('registerSignIn')}
                   </Link>
                 </p>
               </div>

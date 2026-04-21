@@ -11,8 +11,10 @@ import {
   Sparkles,
   CheckCircle2,
 } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext.jsx';
 
 export default function ContactUs() {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -44,27 +46,27 @@ export default function ContactUs() {
 
   const cards = [
     {
-      title: 'Our address',
+      title: t('contactAddressTitle'),
       lines: ['Tiwariganj', 'Lucknow, Uttar Pradesh (226028)', 'India'],
       icon: MapPin,
     },
     {
-      title: 'Phone',
+      title: t('contactPhoneTitle'),
       content: (
-        <a href="tel:+916395490029" className="font-medium text-amber-800 hover:text-primary">
-          +91 63954 90029
+        <a href="tel:+919982385483" className="font-medium text-amber-800 hover:text-primary">
+          +91 9982385483
         </a>
       ),
       icon: Phone,
     },
     {
-      title: 'Email',
+      title: t('contactEmailTitle'),
       content: (
         <a
-          href="mailto:amitdiwakar946@gmail.com"
+          href="mailto:saneeipk@gmail.com"
           className="break-all font-medium text-amber-800 hover:text-primary"
         >
-          amitdiwakar946@gmail.com
+          saneepk@gmail.com
         </a>
       ),
       icon: Mail,
@@ -82,12 +84,11 @@ export default function ContactUs() {
         >
           <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-amber-200/80 bg-amber-50/90 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.22em] text-amber-800">
             <Sparkles className="size-3.5 text-amber-600" strokeWidth={2.5} />
-            We are here to help
+            {t('contactBadge')}
           </p>
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 md:text-5xl">Contact us</h1>
+          <h1 className="text-3xl font-black tracking-tight text-slate-900 md:text-5xl">{t('contactTitle')}</h1>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-600 md:text-base">
-            Questions about bookings, becoming a vendor, or something else? Send a note — we will get back
-            as soon as we can.
+            {t('contactSubtitle')}
           </p>
         </motion.header>
 
@@ -135,8 +136,8 @@ export default function ContactUs() {
                   <MessageCircle className="size-5" strokeWidth={2.2} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900">Send a message</h2>
-                  <p className="text-sm text-slate-500">Fields marked * are required.</p>
+                  <h2 className="text-xl font-bold text-slate-900">{t('contactSendMessage')}</h2>
+                  <p className="text-sm text-slate-500">{t('contactRequiredFields')}</p>
                 </div>
               </div>
 
@@ -146,7 +147,7 @@ export default function ContactUs() {
                   role="status"
                 >
                   <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-emerald-600" />
-                  <span>Thank you for reaching out. We will reply shortly.</span>
+                  <span>{t('contactThanks')}</span>
                 </div>
               )}
 
@@ -154,7 +155,7 @@ export default function ContactUs() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label htmlFor="name" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      Full name *
+                      {t('contactFullName')}
                     </label>
                     <input
                       type="text"
@@ -164,12 +165,12 @@ export default function ContactUs() {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      placeholder="Your name"
+                      placeholder={t('contactPlaceholderName')}
                     />
                   </div>
                   <div>
                     <label htmlFor="email" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      Email *
+                      {t('contactEmailLabel')}
                     </label>
                     <input
                       type="email"
@@ -186,7 +187,7 @@ export default function ContactUs() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label htmlFor="phone" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      Phone *
+                      {t('contactPhoneLabel')}
                     </label>
                     <input
                       type="tel"
@@ -201,7 +202,7 @@ export default function ContactUs() {
                   </div>
                   <div>
                     <label htmlFor="subject" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      Subject *
+                      {t('contactSubjectLabel')}
                     </label>
                     <select
                       id="subject"
@@ -211,19 +212,19 @@ export default function ContactUs() {
                       onChange={handleChange}
                       required
                     >
-                      <option value="">Select a topic</option>
-                      <option value="general">General inquiry</option>
-                      <option value="booking">Booking support</option>
-                      <option value="provider">Become a provider</option>
-                      <option value="technical">Technical support</option>
-                      <option value="feedback">Feedback</option>
-                      <option value="other">Other</option>
+                      <option value="">{t('contactSelectTopic')}</option>
+                      <option value="general">{t('contactTopicGeneral')}</option>
+                      <option value="booking">{t('contactTopicBooking')}</option>
+                      <option value="provider">{t('contactTopicProvider')}</option>
+                      <option value="technical">{t('contactTopicTechnical')}</option>
+                      <option value="feedback">{t('contactTopicFeedback')}</option>
+                      <option value="other">{t('contactTopicOther')}</option>
                     </select>
                   </div>
                 </div>
                 <div>
                   <label htmlFor="message" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Message *
+                    {t('contactMessageLabel')}
                   </label>
                   <textarea
                     id="message"
@@ -233,7 +234,7 @@ export default function ContactUs() {
                     value={formData.message}
                     onChange={handleChange}
                     required
-                    placeholder="How can we help?"
+                    placeholder={t('contactPlaceholderMessage')}
                   />
                 </div>
                 <button
@@ -241,7 +242,7 @@ export default function ContactUs() {
                   className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-bold text-background-dark shadow-lg shadow-amber-200/50 transition hover:-translate-y-0.5 hover:shadow-xl sm:w-auto sm:px-10"
                 >
                   <Send className="size-4" strokeWidth={2.2} />
-                  Send message
+                  {t('contactSendButton')}
                 </button>
               </form>
             </div>
@@ -257,26 +258,26 @@ export default function ContactUs() {
               <div className="mb-4 inline-flex size-11 items-center justify-center rounded-xl bg-white/10 text-primary">
                 <Clock className="size-5" strokeWidth={2.2} />
               </div>
-              <h2 className="text-lg font-bold">Business hours</h2>
+              <h2 className="text-lg font-bold">{t('contactBusinessHours')}</h2>
               <ul className="mt-4 space-y-2 text-sm text-white/75">
                 <li className="flex justify-between gap-4 border-b border-white/10 pb-2">
                   <span>Mon – Fri</span>
                   <span className="font-medium text-white/90">9:00 – 18:00</span>
                 </li>
                 <li className="flex justify-between gap-4 border-b border-white/10 pb-2">
-                  <span>Saturday</span>
+                  <span>{t('contactSaturday')}</span>
                   <span className="font-medium text-white/90">10:00 – 16:00</span>
                 </li>
                 <li className="flex justify-between gap-4 pt-1">
-                  <span>Sunday</span>
-                  <span className="font-medium text-white/90">Closed</span>
+                  <span>{t('contactSunday')}</span>
+                  <span className="font-medium text-white/90">{t('contactClosed')}</span>
                 </li>
               </ul>
             </div>
 
             <div className="rounded-[2rem] border border-slate-200/80 bg-white/95 p-6 shadow-sm md:rounded-[2.5rem] md:p-8">
-              <h2 className="text-lg font-bold text-slate-900">Follow along</h2>
-              <p className="mt-1 text-sm text-slate-500">Updates, inspiration, and behind-the-scenes.</p>
+              <h2 className="text-lg font-bold text-slate-900">{t('contactFollowAlong')}</h2>
+              <p className="mt-1 text-sm text-slate-500">{t('contactFollowSubtitle')}</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {[
                   { href: 'https://facebook.com', label: 'Facebook' },
@@ -300,7 +301,7 @@ export default function ContactUs() {
                 to="/services"
                 className="mt-6 inline-flex text-sm font-semibold text-amber-800 hover:text-primary"
               >
-                Browse vendors →
+                {t('contactBrowseVendors')} →
               </Link>
             </div>
           </motion.aside>
